@@ -1,41 +1,55 @@
 import { Link } from "react-router-dom";
+import {
+  GraduationCap,
+  Camera,
+  BookOpen,
+  Bot,
+  Sparkles,
+  Building2,
+} from "lucide-react";
 
 const partners = [
   {
-    icon: "🎓",
+    icon: GraduationCap,
     name: "PMAA Education",
     type: "Education Group",
     bg: "bg-[#F57A24]/[0.12]",
+    color: "text-[#F57A24]",
   },
   {
-    icon: "📷",
+    icon: Camera,
     name: "AIM Ambition",
     type: "Digital Printing",
     bg: "bg-[#2F88C4]/[0.12]",
+    color: "text-[#2F88C4]",
   },
   {
-    icon: "📚",
+    icon: BookOpen,
     name: "Ruwad Al Hayah",
     type: "Educational Services",
     bg: "bg-[#6CC2E9]/[0.12]",
+    color: "text-[#6CC2E9]",
   },
   {
-    icon: "🤖",
+    icon: Bot,
     name: "Mindful Kids",
     type: "EdTech Publishing",
     bg: "bg-[#F9B307]/[0.12]",
+    color: "text-[#F9B307]",
   },
   {
-    icon: "🌹",
+    icon: Sparkles,
     name: "Al Oud Perfumes",
     type: "E-Commerce",
     bg: "bg-[#F57A24]/[0.12]",
+    color: "text-[#F57A24]",
   },
   {
-    icon: "🏢",
+    icon: Building2,
     name: "Gulf Publishers",
     type: "Publishing",
     bg: "bg-[#2F88C4]/[0.12]",
+    color: "text-[#2F88C4]",
   },
 ];
 
@@ -47,28 +61,32 @@ export default function PartnersSection() {
       </div>
 
       <div className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
-        {partners.map((partner) => (
-          <Link
-            key={partner.name}
-            to="/portfolio"
-            className="flex items-center gap-2.5 rounded-[10px] border border-white/[0.07] bg-white/[0.04] px-3.5 py-3 no-underline transition-all duration-300 hover:-translate-y-0.5 hover:border-[#F57A24]/30 hover:bg-white/[0.06]"
-          >
-            <div
-              className={`flex h-[34px] w-[34px] shrink-0 items-center justify-center rounded-lg text-[15px] ${partner.bg}`}
-            >
-              {partner.icon}
-            </div>
+        {partners.map((partner) => {
+          const Icon = partner.icon;
 
-            <div>
-              <div className="text-[11px] font-bold leading-[1.3] text-white">
-                {partner.name}
+          return (
+            <Link
+              key={partner.name}
+              to="/portfolio"
+              className="group flex items-center gap-2.5 rounded-[10px] border border-white/[0.07] bg-white/[0.04] px-3.5 py-3 no-underline transition-all duration-300 hover:-translate-y-0.5 hover:border-[#F57A24]/30 hover:bg-white/[0.06]"
+            >
+              <div
+                className={`flex h-[34px] w-[34px] shrink-0 items-center justify-center rounded-lg transition duration-300 group-hover:scale-105 ${partner.bg} ${partner.color}`}
+              >
+                <Icon size={17} strokeWidth={2.2} />
               </div>
-              <div className="mt-0.5 text-[9px] text-white/30">
-                {partner.type}
+
+              <div>
+                <div className="text-[11px] font-bold leading-[1.3] text-white">
+                  {partner.name}
+                </div>
+                <div className="mt-0.5 text-[9px] text-white/30">
+                  {partner.type}
+                </div>
               </div>
-            </div>
-          </Link>
-        ))}
+            </Link>
+          );
+        })}
       </div>
     </section>
   );

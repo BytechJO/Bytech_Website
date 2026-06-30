@@ -89,7 +89,6 @@ export default function HeroSection() {
               Build.
             </span>
             <span className="block text-white">Launch.</span>
-            {/* تحسين: زيادة شفافية كلمة Grow قليلاً وإضافة تأثير نص ظل */}
             <span className="block text-white/25 [-webkit-text-stroke:1px_rgba(255,255,255,0.1)]">
               Grow.
             </span>

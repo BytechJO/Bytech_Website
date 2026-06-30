@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import Ticker from "./Ticker";
+import { Mail, Phone, MapPin } from "lucide-react";
 
 export default function Footer() {
   return (
@@ -17,26 +18,28 @@ export default function Footer() {
               Byte Technology for Digital Solutions — delivering integrated
               digital ecosystems across software, education, media, and growth.
             </p>
-
             <a
               href="mailto:services@bytechjo.com"
               className="mb-2 flex items-center gap-2 text-xs text-white/40 no-underline transition-colors duration-200 hover:text-[#F57A24]"
             >
-              ✉ services@bytechjo.com
+              <Mail size={14} strokeWidth={2} />
+              <span>services@bytechjo.com</span>
             </a>
 
             <a
               href="tel:+96277995100"
               className="mb-2 flex items-center gap-2 text-xs text-white/40 no-underline transition-colors duration-200 hover:text-[#F57A24]"
             >
-              📞 +962 7 7995 1000
+              <Phone size={14} strokeWidth={2} />
+              <span>+962 7 7995 1000</span>
             </a>
 
             <a
               href="#"
               className="mb-2 flex items-center gap-2 text-xs text-white/40 no-underline transition-colors duration-200 hover:text-[#F57A24]"
             >
-              📍 Amman, Jordan — 8th Circle
+              <MapPin size={14} strokeWidth={2} />
+              <span>Amman, Jordan — 8th Circle</span>
             </a>
           </div>
 
