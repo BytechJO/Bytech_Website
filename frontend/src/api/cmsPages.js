@@ -11,7 +11,7 @@ export function useGetPublicCmsPage(pageKey) {
 
   const { data, isLoading, error, isValidating, mutate } = useSWR(URL, fetcher);
 
-  const memoizedValue = useMemo(
+  return useMemo(
     () => ({
       page: data || null,
       content: data?.content || null,
@@ -23,8 +23,6 @@ export function useGetPublicCmsPage(pageKey) {
     }),
     [data, error, isLoading, isValidating, mutate],
   );
-
-  return memoizedValue;
 }
 
 export function useGetAdminCmsPages() {
@@ -32,7 +30,7 @@ export function useGetAdminCmsPages() {
 
   const { data, isLoading, error, isValidating, mutate } = useSWR(URL, fetcher);
 
-  const memoizedValue = useMemo(
+  return useMemo(
     () => ({
       pages: data || [],
       loading: isLoading,
@@ -43,8 +41,6 @@ export function useGetAdminCmsPages() {
     }),
     [data, error, isLoading, isValidating, mutate],
   );
-
-  return memoizedValue;
 }
 
 export function useGetAdminCmsPage(pageKey) {
@@ -52,7 +48,7 @@ export function useGetAdminCmsPage(pageKey) {
 
   const { data, isLoading, error, isValidating, mutate } = useSWR(URL, fetcher);
 
-  const memoizedValue = useMemo(
+  return useMemo(
     () => ({
       page: data || null,
       content: data?.content || null,
@@ -64,8 +60,29 @@ export function useGetAdminCmsPage(pageKey) {
     }),
     [data, error, isLoading, isValidating, mutate],
   );
+}
 
-  return memoizedValue;
+export function useGetCmsPage(pageKey, editable = false) {
+  const URL = pageKey
+    ? editable
+      ? ENDPOINTS.CMS_PAGES.ADMIN_BY_KEY(pageKey)
+      : ENDPOINTS.CMS_PAGES.PUBLIC_BY_KEY(pageKey)
+    : null;
+
+  const { data, isLoading, error, isValidating, mutate } = useSWR(URL, fetcher);
+
+  return useMemo(
+    () => ({
+      page: data || null,
+      content: data?.content || null,
+      loading: isLoading,
+      error,
+      validating: isValidating,
+      empty: !isLoading && !data,
+      refetch: mutate,
+    }),
+    [data, error, isLoading, isValidating, mutate],
+  );
 }
 
 export async function getPublicCmsPage(pageKey) {

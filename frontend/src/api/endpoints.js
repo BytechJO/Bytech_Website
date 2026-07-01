@@ -22,15 +22,16 @@ const ENDPOINTS = {
     DELETE: (id) => `/page-sections/${id}`,
     REORDER: (pageId) => `/page-sections/reorder/${pageId}`,
   },
+
   CMS_PAGES: {
     PUBLIC_BY_KEY: (pageKey) => `/cms-pages/public/${pageKey}`,
-
     ADMIN: "/cms-pages/admin",
     ADMIN_BY_KEY: (pageKey) => `/cms-pages/admin/${pageKey}`,
     CREATE: "/cms-pages/admin",
     UPDATE: (pageKey) => `/cms-pages/admin/${pageKey}`,
     DELETE: (pageKey) => `/cms-pages/admin/${pageKey}`,
   },
+
   UPLOAD: {
     IMAGE: "/upload/image",
   },
