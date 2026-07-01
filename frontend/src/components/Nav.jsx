@@ -1,21 +1,37 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 
-const links = [
-  { label: "Home", to: "/" },
-  { label: "Services", to: "/services" },
-  { label: "Education", to: "/education" },
-  { label: "Portfolio", to: "/portfolio" },
-  { label: "About", to: "/about" },
-  { label: "Blog", to: "/blog" },
-  { label: "Contact", to: "/contact" },
+import { useGetNavbarPages } from "../api/pages";
+
+const fallbackLinks = [
+  { id: "fallback-home", label: "Home", to: "/" },
+  { id: "fallback-services", label: "Services", to: "/services" },
+  { id: "fallback-education", label: "Education", to: "/education" },
+  { id: "fallback-portfolio", label: "Portfolio", to: "/portfolio" },
+  { id: "fallback-about", label: "About", to: "/about" },
+  { id: "fallback-blog", label: "Blog", to: "/blog" },
+  { id: "fallback-contact", label: "Contact", to: "/contact" },
 ];
 
 export default function Nav() {
   const location = useLocation();
 
+  const { links: backendLinks, error } = useGetNavbarPages();
+
   const [scrolled, setScrolled] = useState(false);
   const [progress, setProgress] = useState(0);
+
+  const links = useMemo(() => {
+    if (error || !backendLinks?.length) {
+      return fallbackLinks;
+    }
+
+    return backendLinks.map((link) => ({
+      id: link.id,
+      label: link.navbar_label || link.title || link.slug,
+      to: link.slug === "home" ? "/" : `/${link.slug}`,
+    }));
+  }, [backendLinks, error]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -31,8 +47,10 @@ export default function Nav() {
     handleScroll();
 
     window.addEventListener("scroll", handleScroll);
+
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
   const handleSamePageClick = (event, path) => {
     if (location.pathname === path) {
       event.preventDefault();
@@ -41,6 +59,7 @@ export default function Nav() {
       window.location.reload();
     }
   };
+
   return (
     <>
       <div
@@ -111,7 +130,7 @@ export default function Nav() {
         <div className="hidden items-center gap-9 md:flex">
           {links.map((link) => (
             <NavLink
-              key={link.to}
+              key={link.id}
               to={link.to}
               end={link.to === "/"}
               onClick={(event) => handleSamePageClick(event, link.to)}

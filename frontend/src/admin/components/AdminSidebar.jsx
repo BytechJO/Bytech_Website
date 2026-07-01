@@ -5,6 +5,7 @@ import {
   Mail,
   Settings,
   LogOut,
+  PanelTop,
 } from "lucide-react";
 
 import { useGetAdminPages } from "../../api/pages";
@@ -35,6 +36,7 @@ function SidebarLink({ link }) {
                 : "text-white/35 group-hover:text-[#F57A24]"
             }
           />
+
           <span className="truncate">{link.label}</span>
         </>
       )}
@@ -80,6 +82,27 @@ export default function AdminSidebar() {
               label: "Dashboard",
               to: "/admin",
               icon: LayoutDashboard,
+              end: true,
+            }}
+          />
+
+          <div className="px-4 pb-2 pt-4 text-[10px] font-bold uppercase tracking-[1.6px] text-white/20">
+            Website
+          </div>
+
+          <SidebarLink
+            link={{
+              label: "Navbar",
+              to: "/admin/navbar",
+              icon: PanelTop,
+            }}
+          />
+
+          <SidebarLink
+            link={{
+              label: "Pages",
+              to: "/admin/pages",
+              icon: FileText,
               end: true,
             }}
           />

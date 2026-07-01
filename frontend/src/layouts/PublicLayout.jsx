@@ -1,18 +1,8 @@
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 
 import Nav from "../components/Nav.jsx";
 import Footer from "../components/Footer.jsx";
-
-import {
-  Home,
-  Services,
-  Education,
-  Portfolio,
-  About,
-  Blog,
-  Contact,
-} from "../pages/Pages.jsx";
 
 export default function PublicLayout() {
   const location = useLocation();
@@ -162,15 +152,7 @@ export default function PublicLayout() {
       <Nav scrolled={scrolled} />
 
       <main>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/services" element={<Services />} />
-          <Route path="/education" element={<Education />} />
-          <Route path="/portfolio" element={<Portfolio />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/blog" element={<Blog />} />
-          <Route path="/contact" element={<Contact />} />
-        </Routes>
+        <Outlet />
       </main>
 
       <Footer />

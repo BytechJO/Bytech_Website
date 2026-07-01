@@ -1,18 +1,21 @@
 const express = require("express");
+
 const {
-  getSectionsByPage,
+  getSectionById,
   createSection,
   updateSection,
   deleteSection,
-} = require("../controller/sections.controller");
+  reorderSections,
+} = require("../controller/pageSections.controller");
 
 const { authenticate } = require("../middleware/auth");
 
 const router = express.Router();
 
-router.get("/page/:pageId", authenticate, getSectionsByPage);
+router.get("/:id", authenticate, getSectionById);
 router.post("/", authenticate, createSection);
 router.put("/:id", authenticate, updateSection);
 router.delete("/:id", authenticate, deleteSection);
+router.patch("/reorder/:pageId", authenticate, reorderSections);
 
 module.exports = router;
