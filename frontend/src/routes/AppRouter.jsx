@@ -7,6 +7,7 @@ import AdminOverview from "../admin/pages/admin/AdminOverview";
 import AdminPageBuilder from "../admin/pages/admin/AdminPageBuilder";
 import AdminNavbar from "../admin/pages/navbar/AdminNavbar";
 import AdminPages from "../admin/pages/AdminPages";
+import AdminInquiries from "../admin/pages/AdminInquiries";
 
 import { ToastProvider } from "../admin/components/ToastProvider";
 import { ConfirmProvider } from "../admin/components/ConfirmProvider";
@@ -50,6 +51,7 @@ export default function AppRouter() {
           <Route path="navbar" element={<AdminNavbar />} />
           <Route path="pages" element={<AdminPages />} />
           <Route path="pages/:slug" element={<AdminPageBuilder />} />
+          <Route path="inquiries" element={<AdminInquiries />} />
         </Route>
 
         <Route path="*" element={<NotFound />} />

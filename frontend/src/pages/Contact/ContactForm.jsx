@@ -5,6 +5,8 @@ import EditableText from "../../admin/components/EditableText";
 import EditableContactField from "../../admin/components/EditableContactField";
 import { useConfirm } from "../../admin/components/ConfirmProvider";
 
+import { createContactMessage } from "../../api/contact";
+
 const fallbackForm = {
   title: "Send us a message",
   description: "Fill in your details and we'll prepare a tailored proposal.",
@@ -94,6 +96,9 @@ export default function ContactForm({
   const [draggedIndex, setDraggedIndex] = useState(null);
   const [dragOverIndex, setDragOverIndex] = useState(null);
 
+  const [sending, setSending] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+
   const autoScrollFrameRef = useRef(null);
   const lastMouseYRef = useRef(0);
 
@@ -153,12 +158,46 @@ export default function ContactForm({
     autoScrollFrameRef.current = requestAnimationFrame(autoScrollWhileDragging);
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
 
     if (editable) return;
 
-    setSuccessOpen(true);
+    const formElement = e.currentTarget;
+    const formData = new FormData(formElement);
+    const payload = Object.fromEntries(formData.entries());
+
+    const requiredFields = fields.filter((field) => field.required);
+
+    const hasMissingRequiredField = requiredFields.some((field) => {
+      const value = payload[field.name];
+
+      return !value || String(value).trim() === "";
+    });
+
+    if (hasMissingRequiredField) {
+      setSubmitError("Please fill in all required fields.");
+      return;
+    }
+
+    try {
+      setSending(true);
+      setSubmitError("");
+
+      await createContactMessage(payload);
+
+      formElement.reset();
+      setSuccessOpen(true);
+    } catch (error) {
+      console.error("Create contact message error:", error);
+
+      setSubmitError(
+        error?.response?.data?.message ||
+          "Failed to send message. Please try again.",
+      );
+    } finally {
+      setSending(false);
+    }
   }
 
   function addField() {
@@ -369,15 +408,22 @@ export default function ContactForm({
           })}
         </div>
 
+        {submitError && (
+          <div className="mt-4 rounded-lg border border-red-400/20 bg-red-500/10 px-4 py-3 text-xs font-semibold text-red-200">
+            {submitError}
+          </div>
+        )}
+
         <EditableText
           as="button"
-          value={form.submitLabel}
+          value={sending ? "Sending..." : form.submitLabel}
           editable={editable}
           path={[...path, "submitLabel"]}
           onChangePath={onChangePath}
-          className="mt-5 w-full rounded-lg bg-[#F57A24] p-3.5 text-sm font-bold text-white transition hover:bg-[#e06815]"
+          className="mt-5 w-full rounded-lg bg-[#F57A24] p-3.5 text-sm font-bold text-white transition hover:bg-[#e06815] disabled:cursor-not-allowed disabled:opacity-60"
           editClassName="!text-white"
           type={editable ? "button" : "submit"}
+          disabled={sending}
           onClick={(e) => {
             if (editable) {
               e.preventDefault();

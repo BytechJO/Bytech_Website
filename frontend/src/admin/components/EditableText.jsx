@@ -10,6 +10,7 @@ export default function EditableText({
   multiline = false,
   placeholder = "Double click to edit",
   editClassName = "",
+  ...props
 }) {
   const Tag = as;
   const [editing, setEditing] = useState(false);
@@ -50,11 +51,13 @@ export default function EditableText({
     .replaceAll("service-delay-3", "")
     .replaceAll("service-delay-4", "")
     .replaceAll("service-delay-5", "");
-
   if (!editable) {
-    return <Tag className={className}>{value}</Tag>;
+    return (
+      <Tag className={className} {...props}>
+        {value}
+      </Tag>
+    );
   }
-
   if (editing) {
     if (multiline) {
       return (
@@ -88,6 +91,16 @@ export default function EditableText({
 
   return (
     <Tag
+      {...props}
+      onClick={(e) => {
+        if (editable) {
+          e.preventDefault();
+          e.stopPropagation();
+          return;
+        }
+
+        props.onClick?.(e);
+      }}
       onDoubleClick={() => setEditing(true)}
       title="Double click to edit"
       className={`${className} ${editableOutlineClass}`}

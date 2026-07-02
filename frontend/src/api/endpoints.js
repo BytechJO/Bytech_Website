@@ -3,26 +3,6 @@ const ENDPOINTS = {
     LOGIN: "/auth/login",
   },
 
-  PAGES: {
-    ADMIN: "/pages/admin",
-    ADMIN_BY_SLUG: (slug) => `/pages/admin/${slug}`,
-    CREATE: "/pages/admin",
-    UPDATE: (id) => `/pages/admin/${id}`,
-    DELETE: (id) => `/pages/admin/${id}`,
-    UPDATE_NAVBAR: (id) => `/pages/admin/${id}/navbar`,
-    REORDER_NAVBAR: "/pages/admin/navbar/reorder",
-    NAVBAR: "/pages/navbar",
-    PUBLIC_BY_SLUG: (slug) => `/pages/public/${slug}`,
-  },
-
-  SECTIONS: {
-    GET_ONE: (id) => `/page-sections/${id}`,
-    CREATE: "/page-sections",
-    UPDATE: (id) => `/page-sections/${id}`,
-    DELETE: (id) => `/page-sections/${id}`,
-    REORDER: (pageId) => `/page-sections/reorder/${pageId}`,
-  },
-
   CMS_PAGES: {
     PUBLIC_BY_KEY: (pageKey) => `/cms-pages/public/${pageKey}`,
     PUBLIC_NAVBAR: "/cms-pages/public/navbar",
@@ -43,6 +23,22 @@ const ENDPOINTS = {
   },
   UPLOAD: {
     IMAGE: "/upload/image",
+  },
+  CONTACT: {
+    PUBLIC_CREATE: "/contact",
+
+    ADMIN: "/contact/admin",
+    ADMIN_BY_ID: (id) => `/contact/admin/${id}`,
+    UPDATE_STATUS: (id) => `/contact/admin/${id}`,
+    DELETE: (id) => `/contact/admin/${id}`,
+  },
+
+  NOTIFICATIONS: {
+    ADMIN: "/notifications",
+    UNREAD_COUNT: "/notifications/unread-count",
+    MARK_READ: (id) => `/notifications/${id}/read`,
+    MARK_ALL_READ: "/notifications/read-all",
+    DELETE: (id) => `/notifications/${id}`,
   },
 };
 

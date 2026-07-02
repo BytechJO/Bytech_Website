@@ -606,23 +606,15 @@ function FloatingCard({
         editClassName="!text-white/60"
       />
 
-      {editable ? (
-        <EditableText
-          as="p"
-          value={card.value}
-          editable
-          path={[...path, "value"]}
-          onChangePath={onChangePath}
-          className={`text-[26px] font-black ${color}`}
-          editClassName="!text-white"
-        />
-      ) : (
-        <Counter
-          value={card.value || "0"}
-          className={`text-[26px] font-black ${color}`}
-        />
-      )}
-
+      <EditableText
+        as="p"
+        value={card.value || "0"}
+        editable={editable}
+        path={[...path, "value"]}
+        onChangePath={onChangePath}
+        className={`text-[26px] font-black ${color}`}
+        editClassName="!text-white"
+      />
       {card.description ? (
         <EditableText
           as="p"

@@ -1,4 +1,5 @@
-import { Menu, Search, Bell } from "lucide-react";
+import { Menu, Search } from "lucide-react";
+import NotificationsBell from "./NotificationsBell";
 
 export default function AdminHeader() {
   const admin = JSON.parse(localStorage.getItem("admin_user") || "null");
@@ -31,10 +32,7 @@ export default function AdminHeader() {
         </div>
 
         <div className="flex items-center gap-3">
-          <button className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-white/[0.07] bg-white/[0.03] text-white/55 transition hover:text-[#F57A24]">
-            <Bell size={18} />
-            <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-[#F57A24]" />
-          </button>
+          <NotificationsBell />
 
           <div className="hidden items-center gap-3 rounded-2xl border border-white/[0.07] bg-white/[0.03] px-3 py-2 sm:flex">
             <div className="h-9 w-9 rounded-xl bg-[linear-gradient(135deg,#2F88C4,#6CC2E9)]" />

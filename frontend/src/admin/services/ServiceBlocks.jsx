@@ -32,6 +32,47 @@ export default function ServiceBlocks({
     return "service-delay-5";
   };
 
+  function getNextServiceNumber(nextIndex) {
+    return String(nextIndex + 1).padStart(2, "0");
+  }
+
+  function normalizeServices(list) {
+    return list.map((service, index) => ({
+      ...service,
+      number: getNextServiceNumber(index),
+      reverse: index % 2 === 1,
+    }));
+  }
+
+  function addServiceBlock() {
+    const nextIndex = services.length;
+
+    const newService = {
+      id: `service-${Date.now()}`,
+      badge: "New Service",
+      image:
+        "https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=1200&auto=format&fit=crop",
+      label: "NEW SERVICE",
+      number: getNextServiceNumber(nextIndex),
+      reverse: nextIndex % 2 === 1,
+      features: ["New feature one", "New feature two", "New feature three"],
+      buttonUrl: "/contact",
+      titleLine1: "New service,",
+      titleLine2: "ready to edit.",
+      buttonLabel: "Start This Service →",
+      description:
+        "Write a short description for this service block. Explain what the service includes and why clients should choose it.",
+    };
+
+    onChangePath?.([...path], normalizeServices([...services, newService]));
+  }
+
+  function deleteServiceBlock(serviceIndex) {
+    const nextServices = services.filter((_, index) => index !== serviceIndex);
+
+    onChangePath?.([...path], normalizeServices(nextServices));
+  }
+
   function addServiceFeature(serviceIndex) {
     const currentFeatures = Array.isArray(services[serviceIndex]?.features)
       ? services[serviceIndex].features
@@ -78,7 +119,7 @@ export default function ServiceBlocks({
     return () => observer.disconnect();
   }, [services.length, editable]);
 
-  if (services.length === 0) {
+  if (services.length === 0 && !editable) {
     return null;
   }
 
@@ -138,6 +179,36 @@ export default function ServiceBlocks({
       `}</style>
 
       <section className="bg-[#0e1c2e] text-white">
+        {editable && (
+          <div className="border-b border-white/[0.07] bg-[#0e1c2e] px-6 py-6 lg:px-[60px]">
+            <button
+              type="button"
+              onClick={addServiceBlock}
+              className="inline-flex items-center gap-2 rounded-xl border border-[#F57A24]/25 bg-[#F57A24]/10 px-4 py-2.5 text-sm font-bold text-[#F57A24] transition hover:bg-[#F57A24]/15"
+            >
+              <Plus size={16} />
+              Add Service Block
+            </button>
+          </div>
+        )}
+
+        {editable && services.length === 0 && (
+          <div className="px-6 py-16 text-center lg:px-[60px]">
+            <p className="text-sm font-semibold text-white/40">
+              No service blocks yet.
+            </p>
+
+            <button
+              type="button"
+              onClick={addServiceBlock}
+              className="mt-4 inline-flex items-center gap-2 rounded-xl bg-[#F57A24] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#e06815]"
+            >
+              <Plus size={16} />
+              Create First Service Block
+            </button>
+          </div>
+        )}
+
         {services.map((service, index) => {
           const features = Array.isArray(service.features)
             ? service.features
@@ -147,6 +218,7 @@ export default function ServiceBlocks({
             index % 2 === 0 ? "bg-[#0e1c2e]" : "bg-white/[0.01]";
 
           const servicePath = [...path, index];
+          const isReversed = index % 2 === 1;
 
           return (
             <div
@@ -154,14 +226,27 @@ export default function ServiceBlocks({
               id={service.id}
               className={`border-b border-white/[0.07] px-6 py-[96px] last:border-b-0 lg:px-[60px] ${sectionBg}`}
             >
+              {editable && (
+                <div className="mb-5 flex justify-end">
+                  <button
+                    type="button"
+                    onClick={() => deleteServiceBlock(index)}
+                    className="inline-flex items-center gap-2 rounded-xl border border-red-400/20 bg-red-500/10 px-3 py-2 text-xs font-bold text-red-200 transition hover:bg-red-500/15"
+                  >
+                    <Trash2 size={14} />
+                    Delete Block
+                  </button>
+                </div>
+              )}
+
               <div
                 className={`${revealClass} grid items-center gap-[60px] lg:grid-cols-2 ${
-                  service.reverse ? "lg:[direction:rtl]" : ""
+                  isReversed ? "lg:[direction:rtl]" : ""
                 }`}
               >
                 <div
                   className={`${
-                    service.reverse
+                    isReversed
                       ? `${revealRightClass} lg:[direction:ltr]`
                       : revealLeftClass
                   } relative h-[380px] overflow-hidden rounded-2xl`}
@@ -190,7 +275,7 @@ export default function ServiceBlocks({
 
                 <div
                   className={`${
-                    service.reverse
+                    isReversed
                       ? `${revealLeftClass} lg:[direction:ltr]`
                       : revealRightClass
                   }`}
