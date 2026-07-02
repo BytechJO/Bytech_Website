@@ -2,12 +2,17 @@ import { useEffect, useState } from "react";
 import { mutate } from "swr";
 import { Loader2, Save } from "lucide-react";
 
-import { updateAdminCmsPage, useGetCmsPage } from "../../api/cmsPages";
-import ENDPOINTS from "../../api/endpoints";
+import { updateAdminCmsPage, useGetCmsPage } from "../../api/cmsPages.js";
+import ENDPOINTS from "../../api/endpoints.js";
 
-import BlogHero from "./BlogHero";
-import BlogPosts from "./BlogPosts";
-import { useToast } from "../../admin/components/ToastProvider";
+import HeroSection from "./HeroSection.jsx";
+import ServicesSection from "./ServicesSection.jsx";
+import AboutSection from "./AboutSection.jsx";
+import ProcessSection from "./ProcessSection.jsx";
+import CtaSection from "./CtaSection.jsx";
+import Ticker from "../../components/Ticker.jsx";
+import PartnersSection from "./PartnersSection.jsx";
+import { useToast } from "../../admin/components/ToastProvider.jsx";
 
 function setValueByPath(obj, path, value) {
   const copy = Array.isArray(obj) ? [...obj] : { ...obj };
@@ -32,9 +37,9 @@ function setValueByPath(obj, path, value) {
   return copy;
 }
 
-export default function Blog({ editable = false }) {
+export default function HomeDynemic({ editable = false }) {
   const { page, content, loading, error, refetch } = useGetCmsPage(
-    "blog",
+    "home",
     editable,
   );
 
@@ -45,7 +50,7 @@ export default function Blog({ editable = false }) {
   const { showToast } = useToast();
 
   useEffect(() => {
-    document.title = "Blog — Bytech";
+    document.title = "Bytech — Build. Launch. Grow.";
   }, []);
 
   useEffect(() => {
@@ -59,46 +64,16 @@ export default function Blog({ editable = false }) {
   useEffect(() => {
     if (!error) return;
 
-    console.error("Load blog page error:", error);
+    console.error("Load home page error:", error);
 
     showToast({
       type: "error",
       message:
         error.response?.data?.message ||
         error.message ||
-        "Failed to load blog page",
+        "Failed to load home page",
     });
   }, [error, showToast]);
-
-  useEffect(() => {
-    if (editable || !pageContent) return;
-
-    let observer;
-
-    const frame = requestAnimationFrame(() => {
-      observer = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              entry.target.classList.add("visible");
-              observer.unobserve(entry.target);
-            }
-          });
-        },
-        { threshold: 0.15 },
-      );
-
-      document.querySelectorAll(".blog-reveal").forEach((el) => {
-        el.classList.remove("visible");
-        observer.observe(el);
-      });
-    });
-
-    return () => {
-      cancelAnimationFrame(frame);
-      observer?.disconnect();
-    };
-  }, [editable, pageContent]);
 
   function updatePath(path, value) {
     setPageContent((prev) => setValueByPath(prev || {}, path, value));
@@ -111,30 +86,30 @@ export default function Blog({ editable = false }) {
     try {
       setSaving(true);
 
-      await updateAdminCmsPage("blog", {
-        title: page?.title || "Blog — Bytech",
+      await updateAdminCmsPage("home", {
+        title: page?.title || "Bytech — Build. Launch. Grow.",
         content: pageContent,
         is_active: page?.is_active ?? true,
       });
 
       await refetch();
-      await mutate(ENDPOINTS.CMS_PAGES.PUBLIC_BY_KEY("blog"));
+      await mutate(ENDPOINTS.CMS_PAGES.PUBLIC_BY_KEY("home"));
 
       setIsDirty(false);
 
       showToast({
         type: "success",
-        message: "Blog page saved successfully",
+        message: "Home page saved successfully",
       });
     } catch (err) {
-      console.error("Save blog page error:", err);
+      console.error("Save home page error:", err);
 
       showToast({
         type: "error",
         message:
           err.response?.data?.message ||
           err.message ||
-          "Failed to save blog page",
+          "Failed to save home page",
       });
     } finally {
       setSaving(false);
@@ -146,7 +121,7 @@ export default function Blog({ editable = false }) {
       <main className="flex min-h-screen items-center justify-center bg-[#0e1c2e] text-white">
         <div className="flex items-center gap-3 text-white/45">
           <Loader2 size={22} className="animate-spin" />
-          <span className="text-sm">Loading blog...</span>
+          <span className="text-sm">Loading home...</span>
         </div>
       </main>
     );
@@ -155,57 +130,13 @@ export default function Blog({ editable = false }) {
   if (!pageContent) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-[#0e1c2e] text-white">
-        <div className="text-sm text-white/45">Blog content not found.</div>
+        <div className="text-sm text-white/45">Home content not found.</div>
       </main>
     );
   }
 
   return (
     <>
-      <style>{`
-        .blog-reveal {
-          opacity: 0;
-          transform: translateY(36px);
-          transition:
-            opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1),
-            transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .blog-reveal.visible {
-          opacity: 1;
-          transform: translateY(0);
-        }
-
-        .blog-delay-1 { transition-delay: 0.1s; }
-        .blog-delay-2 { transition-delay: 0.2s; }
-
-        @keyframes blogOrb1 {
-          0%, 100% { transform: translate(0, 0); }
-          50% { transform: translate(40px, -30px); }
-        }
-
-        @keyframes blogOrb2 {
-          0%, 100% { transform: translate(0, 0); }
-          50% { transform: translate(-30px, 40px); }
-        }
-
-        @keyframes blogPulse {
-          0%, 100% {
-            opacity: 0.5;
-            transform: scale(1);
-          }
-          50% {
-            opacity: 1;
-            transform: scale(1.2);
-          }
-        }
-
-        @keyframes blogTicker {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
-        }
-      `}</style>
-
       {editable && (
         <button
           type="button"
@@ -223,18 +154,48 @@ export default function Blog({ editable = false }) {
         </button>
       )}
 
-      <main className="bg-[#0e1c2e] text-white">
-        <BlogHero
+      <main className="home-page relative overflow-x-hidden text-white">
+        <HeroSection
           data={pageContent.hero}
           editable={editable}
           path={["hero"]}
           onChangePath={updatePath}
         />
 
-        <BlogPosts
-          data={pageContent.posts}
+        <PartnersSection
+          data={pageContent.partners}
           editable={editable}
-          path={["posts"]}
+          path={["partners"]}
+          onChangePath={updatePath}
+        />
+
+        {!editable && <Ticker />}
+
+        <ServicesSection
+          data={pageContent.services}
+          editable={editable}
+          path={["services"]}
+          onChangePath={updatePath}
+        />
+
+        <AboutSection
+          data={pageContent.about}
+          editable={editable}
+          path={["about"]}
+          onChangePath={updatePath}
+        />
+
+        <ProcessSection
+          data={pageContent.process}
+          editable={editable}
+          path={["process"]}
+          onChangePath={updatePath}
+        />
+
+        <CtaSection
+          data={pageContent.cta}
+          editable={editable}
+          path={["cta"]}
           onChangePath={updatePath}
         />
       </main>

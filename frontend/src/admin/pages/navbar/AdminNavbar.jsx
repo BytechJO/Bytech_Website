@@ -11,15 +11,30 @@ import {
 import AdminNavbarPreview from "./AdminNavbarPreview";
 
 import {
-  useGetAdminPages,
-  updatePageNavbarStatus,
-  reorderNavbarPages,
-} from "../../../api/pages";
+  useGetAdminCmsPages,
+  updateAdminCmsPage,
+  updateCmsPageNavbarStatus,
+  reorderCmsNavbarPages,
+} from "../../../api/cmsPages";
+
+function getPageKey(page) {
+  return page.page_key || page.pageKey || "";
+}
+
+function getPageLabel(page) {
+  return page.nav_label || page.navLabel || page.title || getPageKey(page);
+}
+
+function getPagePath(page) {
+  const pageKey = getPageKey(page);
+
+  return pageKey === "home" ? "/" : `/${pageKey}`;
+}
 
 export default function AdminNavbar() {
-  const { pages, loading, error, refetch } = useGetAdminPages();
+  const { pages, loading, error, refetch } = useGetAdminCmsPages();
 
-  const [savingId, setSavingId] = useState(null);
+  const [savingKey, setSavingKey] = useState(null);
   const [savingOrder, setSavingOrder] = useState(false);
 
   const [draggedIndex, setDraggedIndex] = useState(null);
@@ -38,40 +53,34 @@ export default function AdminNavbar() {
 
         if (orderA !== orderB) return orderA - orderB;
 
-        return a.id - b.id;
+        return (a.id ?? 0) - (b.id ?? 0);
       });
   }, [pages]);
 
   const currentNavbarPages = useMemo(() => {
     if (!dragOrder.length) return navbarPages;
 
-    const pageMap = new Map(navbarPages.map((page) => [page.id, page]));
+    const pageMap = new Map(
+      navbarPages.map((page) => [getPageKey(page), page]),
+    );
 
-    return dragOrder.map((id) => pageMap.get(id)).filter(Boolean);
+    return dragOrder.map((pageKey) => pageMap.get(pageKey)).filter(Boolean);
   }, [dragOrder, navbarPages]);
 
   const availablePages = useMemo(() => {
     return pages.filter((page) => !page.show_in_navbar);
   }, [pages]);
 
-  const getPageLabel = (page) => {
-    return page.navbar_label || page.title || page.slug;
-  };
-
-  const getPagePath = (page) => {
-    return page.slug === "home" ? "/" : `/${page.slug}`;
-  };
-
-  const stopAutoScroll = () => {
+  function stopAutoScroll() {
     if (autoScrollFrame.current) {
       cancelAnimationFrame(autoScrollFrame.current);
       autoScrollFrame.current = null;
     }
 
     lastDragY.current = null;
-  };
+  }
 
-  const runAutoScroll = () => {
+  function runAutoScroll() {
     if (lastDragY.current === null) return;
 
     const edgeSize = 130;
@@ -100,9 +109,9 @@ export default function AdminNavbar() {
     }
 
     autoScrollFrame.current = requestAnimationFrame(runAutoScroll);
-  };
+  }
 
-  const handleDragOver = (event) => {
+  function handleDragOver(event) {
     event.preventDefault();
 
     lastDragY.current = event.clientY;
@@ -110,49 +119,55 @@ export default function AdminNavbar() {
     if (!autoScrollFrame.current) {
       autoScrollFrame.current = requestAnimationFrame(runAutoScroll);
     }
-  };
+  }
 
-  const handleAddToNavbar = async (page) => {
+  async function handleAddToNavbar(page) {
+    const pageKey = getPageKey(page);
+
     try {
-      setSavingId(page.id);
+      setSavingKey(pageKey);
 
-      await updatePageNavbarStatus(page.id, {
+      await updateAdminCmsPage(pageKey, {
+        title: page.title,
+        nav_label: getPageLabel(page),
         show_in_navbar: true,
         navbar_order: navbarPages.length + 1,
-        navbar_label: getPageLabel(page),
+        is_active: page.is_active ?? true,
       });
 
       setDragOrder([]);
       await refetch();
     } finally {
-      setSavingId(null);
+      setSavingKey(null);
     }
-  };
+  }
 
-  const handleRemoveFromNavbar = async (page) => {
+  async function handleRemoveFromNavbar(page) {
+    const pageKey = getPageKey(page);
+
     try {
-      setSavingId(page.id);
+      setSavingKey(pageKey);
 
-      await updatePageNavbarStatus(page.id, {
+      await updateCmsPageNavbarStatus(pageKey, {
         show_in_navbar: false,
       });
 
       setDragOrder([]);
       await refetch();
     } finally {
-      setSavingId(null);
+      setSavingKey(null);
     }
-  };
+  }
 
-  const handleDragStart = (index) => {
+  function handleDragStart(index) {
     setDraggedIndex(index);
 
     if (!dragOrder.length) {
-      setDragOrder(navbarPages.map((page) => page.id));
+      setDragOrder(navbarPages.map((page) => getPageKey(page)));
     }
-  };
+  }
 
-  const handleDragEnter = (index) => {
+  function handleDragEnter(index) {
     if (draggedIndex === null || draggedIndex === index) return;
 
     setDragOverIndex(index);
@@ -160,7 +175,7 @@ export default function AdminNavbar() {
     setDragOrder((prev) => {
       const currentOrder = prev.length
         ? [...prev]
-        : navbarPages.map((page) => page.id);
+        : navbarPages.map((page) => getPageKey(page));
 
       const [draggedItem] = currentOrder.splice(draggedIndex, 1);
 
@@ -170,9 +185,9 @@ export default function AdminNavbar() {
 
       return currentOrder;
     });
-  };
+  }
 
-  const handleDragEnd = async () => {
+  async function handleDragEnd() {
     stopAutoScroll();
 
     if (!dragOrder.length) {
@@ -184,12 +199,12 @@ export default function AdminNavbar() {
     try {
       setSavingOrder(true);
 
-      const payload = dragOrder.map((id, index) => ({
-        id,
+      const payload = dragOrder.map((pageKey, index) => ({
+        page_key: pageKey,
         navbar_order: index + 1,
       }));
 
-      await reorderNavbarPages(payload);
+      await reorderCmsNavbarPages(payload);
 
       setDraggedIndex(null);
       setDragOverIndex(null);
@@ -199,7 +214,7 @@ export default function AdminNavbar() {
     } finally {
       setSavingOrder(false);
     }
-  };
+  }
 
   if (loading) {
     return (
@@ -266,55 +281,59 @@ export default function AdminNavbar() {
             </div>
           ) : (
             <div className="space-y-3">
-              {currentNavbarPages.map((page, index) => (
-                <div
-                  key={page.id}
-                  draggable={!savingOrder}
-                  onDragStart={() => handleDragStart(index)}
-                  onDragEnter={() => handleDragEnter(index)}
-                  onDragEnd={handleDragEnd}
-                  onDragOver={handleDragOver}
-                  className={`flex cursor-grab items-center justify-between gap-4 rounded-2xl border px-4 py-4 transition active:cursor-grabbing ${
-                    dragOverIndex === index
-                      ? "border-[#F57A24]/40 bg-[#F57A24]/10"
-                      : "border-white/[0.07] bg-white/[0.03] hover:bg-white/[0.05]"
-                  } ${savingOrder ? "pointer-events-none opacity-60" : ""}`}
-                >
-                  <div className="flex min-w-0 items-center gap-4">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/[0.07] bg-white/[0.03] text-white/25">
-                      <GripVertical size={17} />
-                    </div>
+              {currentNavbarPages.map((page, index) => {
+                const pageKey = getPageKey(page);
 
-                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#F57A24]/15 text-[#F57A24]">
-                      <Link2 size={18} />
-                    </div>
-
-                    <div className="min-w-0">
-                      <h3 className="truncate text-[15px] font-bold text-white">
-                        {getPageLabel(page)}
-                      </h3>
-
-                      <p className="truncate text-[12px] text-white/35">
-                        {getPagePath(page)}
-                      </p>
-                    </div>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveFromNavbar(page)}
-                    disabled={savingId === page.id || savingOrder}
-                    className="flex items-center gap-2 rounded-xl border border-red-400/20 bg-red-400/10 px-4 py-2.5 text-[12px] font-bold text-red-200 transition hover:bg-red-400/15 disabled:opacity-60"
+                return (
+                  <div
+                    key={pageKey}
+                    draggable={!savingOrder}
+                    onDragStart={() => handleDragStart(index)}
+                    onDragEnter={() => handleDragEnter(index)}
+                    onDragEnd={handleDragEnd}
+                    onDragOver={handleDragOver}
+                    className={`flex cursor-grab items-center justify-between gap-4 rounded-2xl border px-4 py-4 transition active:cursor-grabbing ${
+                      dragOverIndex === index
+                        ? "border-[#F57A24]/40 bg-[#F57A24]/10"
+                        : "border-white/[0.07] bg-white/[0.03] hover:bg-white/[0.05]"
+                    } ${savingOrder ? "pointer-events-none opacity-60" : ""}`}
                   >
-                    {savingId === page.id ? (
-                      <Loader2 size={15} className="animate-spin" />
-                    ) : (
-                      <Trash2 size={15} />
-                    )}
-                    Remove
-                  </button>
-                </div>
-              ))}
+                    <div className="flex min-w-0 items-center gap-4">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/[0.07] bg-white/[0.03] text-white/25">
+                        <GripVertical size={17} />
+                      </div>
+
+                      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#F57A24]/15 text-[#F57A24]">
+                        <Link2 size={18} />
+                      </div>
+
+                      <div className="min-w-0">
+                        <h3 className="truncate text-[15px] font-bold text-white">
+                          {getPageLabel(page)}
+                        </h3>
+
+                        <p className="truncate text-[12px] text-white/35">
+                          {getPagePath(page)}
+                        </p>
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveFromNavbar(page)}
+                      disabled={savingKey === pageKey || savingOrder}
+                      className="flex items-center gap-2 rounded-xl border border-red-400/20 bg-red-400/10 px-4 py-2.5 text-[12px] font-bold text-red-200 transition hover:bg-red-400/15 disabled:opacity-60"
+                    >
+                      {savingKey === pageKey ? (
+                        <Loader2 size={15} className="animate-spin" />
+                      ) : (
+                        <Trash2 size={15} />
+                      )}
+                      Remove
+                    </button>
+                  </div>
+                );
+              })}
             </div>
           )}
         </div>
@@ -330,8 +349,8 @@ export default function AdminNavbar() {
             </h2>
 
             <p className="mt-2 text-sm text-white/35">
-              These pages exist in the backend but are not currently shown in
-              the navbar.
+              These CMS pages exist in the backend but are not currently shown
+              in the navbar.
             </p>
           </div>
 
@@ -351,42 +370,46 @@ export default function AdminNavbar() {
             </div>
           ) : (
             <div className="space-y-3">
-              {availablePages.map((page) => (
-                <div
-                  key={page.id}
-                  className="flex items-center justify-between gap-4 rounded-2xl border border-white/[0.07] bg-white/[0.03] px-4 py-4"
-                >
-                  <div className="flex min-w-0 items-center gap-4">
-                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white/[0.05] text-white/35">
-                      <FileText size={18} />
-                    </div>
+              {availablePages.map((page) => {
+                const pageKey = getPageKey(page);
 
-                    <div className="min-w-0">
-                      <h3 className="truncate text-[15px] font-bold text-white">
-                        {getPageLabel(page)}
-                      </h3>
-
-                      <p className="truncate text-[12px] text-white/35">
-                        {getPagePath(page)}
-                      </p>
-                    </div>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={() => handleAddToNavbar(page)}
-                    disabled={savingId === page.id || savingOrder}
-                    className="flex items-center gap-2 rounded-xl bg-[#F57A24] px-4 py-2.5 text-[12px] font-bold text-white transition hover:bg-[#e06815] disabled:opacity-60"
+                return (
+                  <div
+                    key={pageKey}
+                    className="flex items-center justify-between gap-4 rounded-2xl border border-white/[0.07] bg-white/[0.03] px-4 py-4"
                   >
-                    {savingId === page.id ? (
-                      <Loader2 size={15} className="animate-spin" />
-                    ) : (
-                      <Plus size={15} />
-                    )}
-                    Add
-                  </button>
-                </div>
-              ))}
+                    <div className="flex min-w-0 items-center gap-4">
+                      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white/[0.05] text-white/35">
+                        <FileText size={18} />
+                      </div>
+
+                      <div className="min-w-0">
+                        <h3 className="truncate text-[15px] font-bold text-white">
+                          {getPageLabel(page)}
+                        </h3>
+
+                        <p className="truncate text-[12px] text-white/35">
+                          {getPagePath(page)}
+                        </p>
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => handleAddToNavbar(page)}
+                      disabled={savingKey === pageKey || savingOrder}
+                      className="flex items-center gap-2 rounded-xl bg-[#F57A24] px-4 py-2.5 text-[12px] font-bold text-white transition hover:bg-[#e06815] disabled:opacity-60"
+                    >
+                      {savingKey === pageKey ? (
+                        <Loader2 size={15} className="animate-spin" />
+                      ) : (
+                        <Plus size={15} />
+                      )}
+                      Add
+                    </button>
+                  </div>
+                );
+              })}
             </div>
           )}
         </div>

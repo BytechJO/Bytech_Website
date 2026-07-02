@@ -1,13 +1,25 @@
 import { useParams } from "react-router-dom";
 import { Plus, Loader2, FileText } from "lucide-react";
 
-import { useGetAdminPageBySlug } from "../../../api/pages";
+import { useGetAdminCmsPage } from "../../../api/cmsPages";
 import SectionCard from "../../components/SectionCard";
 
-export default function AdminPageBuilder() {
-  const { slug } = useParams();
+function getPageKey(page) {
+  return page?.page_key || page?.pageKey || "";
+}
 
-  const { page, loading, error } = useGetAdminPageBySlug(slug);
+function getPublicPath(page) {
+  const pageKey = getPageKey(page);
+
+  return pageKey === "home" ? "/" : `/${pageKey}`;
+}
+
+export default function AdminPageBuilder() {
+  const { pageKey, slug } = useParams();
+
+  const currentPageKey = pageKey || slug;
+
+  const { page, loading, error } = useGetAdminCmsPage(currentPageKey);
 
   if (loading) {
     return (
@@ -23,7 +35,9 @@ export default function AdminPageBuilder() {
   if (error) {
     return (
       <div className="rounded-[30px] border border-red-400/20 bg-red-400/10 p-6 text-red-200">
-        {error.response?.data?.message || "Failed to load page"}
+        {error.response?.data?.message ||
+          error.message ||
+          "Failed to load page"}
       </div>
     );
   }
@@ -36,6 +50,9 @@ export default function AdminPageBuilder() {
     );
   }
 
+  const pageKeyValue = getPageKey(page);
+  const publicPath = getPublicPath(page);
+
   return (
     <>
       <div className="space-y-6">
@@ -47,7 +64,7 @@ export default function AdminPageBuilder() {
               </div>
 
               <p className="text-[11px] uppercase tracking-[1.8px] text-white/25">
-                Page Builder
+                CMS Page Builder
               </p>
 
               <h1 className="mt-2 text-[34px] font-black tracking-[-1.4px] text-white">
@@ -56,18 +73,47 @@ export default function AdminPageBuilder() {
 
               <p className="mt-2 text-sm text-white/35">
                 Manage sections for{" "}
-                <span className="text-white/60">/{page.slug}</span>
+                <span className="text-white/60">{publicPath}</span>
               </p>
+
+              <div className="mt-4 flex flex-wrap gap-2">
+                <span
+                  className={`rounded-full px-3 py-1 text-[11px] font-bold ${
+                    page.is_active
+                      ? "bg-emerald-400/10 text-emerald-300"
+                      : "bg-red-400/10 text-red-300"
+                  }`}
+                >
+                  {page.is_active ? "Active" : "Inactive"}
+                </span>
+
+                <span
+                  className={`rounded-full px-3 py-1 text-[11px] font-bold ${
+                    page.show_in_navbar
+                      ? "bg-[#F57A24]/10 text-[#F9B307]"
+                      : "bg-white/[0.05] text-white/30"
+                  }`}
+                >
+                  {page.show_in_navbar ? "In Navbar" : "Hidden from Navbar"}
+                </span>
+
+                <span className="rounded-full bg-white/[0.05] px-3 py-1 text-[11px] font-bold text-white/30">
+                  key: {pageKeyValue}
+                </span>
+              </div>
             </div>
 
-            <button className="flex items-center justify-center gap-2 rounded-2xl bg-[#F57A24] px-5 py-3 text-sm font-bold text-white transition hover:-translate-y-px hover:bg-[#e06815]">
+            <button
+              type="button"
+              className="flex items-center justify-center gap-2 rounded-2xl bg-[#F57A24] px-5 py-3 text-sm font-bold text-white transition hover:-translate-y-px hover:bg-[#e06815]"
+            >
               <Plus size={18} />
               Add Section
             </button>
           </div>
         </div>
 
-        <SectionCard slug={slug} />
+        <SectionCard pageKey={pageKeyValue} slug={pageKeyValue} />
       </div>
     </>
   );

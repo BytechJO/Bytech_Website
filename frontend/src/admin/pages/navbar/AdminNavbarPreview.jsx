@@ -1,5 +1,20 @@
 import { NavLink } from "react-router-dom";
 
+function getPageKey(link) {
+  return link.page_key || link.pageKey || link.slug || "";
+}
+
+function getPageLabel(link) {
+  return (
+    link.nav_label ||
+    link.navLabel ||
+    link.navbar_label ||
+    link.title ||
+    link.title_en ||
+    getPageKey(link)
+  );
+}
+
 export default function AdminNavbarPreview({ links = [] }) {
   return (
     <div className="rounded-[30px] border border-white/[0.07] bg-[#112233]/70 p-5 shadow-[0_30px_100px_rgba(0,0,0,0.22)] backdrop-blur-[24px]">
@@ -71,18 +86,22 @@ export default function AdminNavbarPreview({ links = [] }) {
           </div>
 
           <div className="hidden items-center gap-7 xl:flex">
-            {links.map((link) => (
-              <NavLink
-                key={link.id}
-                to={link.slug === "home" ? "/" : `/${link.slug}`}
-                target="_blank"
-                className="group relative text-[13px] font-medium text-white/50 no-underline transition-colors duration-200 hover:text-white"
-              >
-                {link.navbar_label || link.title || link.title_en || link.slug}
+            {links.map((link) => {
+              const pageKey = getPageKey(link);
 
-                <span className="absolute bottom-[-3px] left-0 h-px w-0 bg-[#F57A24] transition-all duration-200 group-hover:w-full" />
-              </NavLink>
-            ))}
+              return (
+                <NavLink
+                  key={pageKey}
+                  to={pageKey === "home" ? "/" : `/${pageKey}`}
+                  target="_blank"
+                  className="group relative text-[13px] font-medium text-white/50 no-underline transition-colors duration-200 hover:text-white"
+                >
+                  {getPageLabel(link)}
+
+                  <span className="absolute bottom-[-3px] left-0 h-px w-0 bg-[#F57A24] transition-all duration-200 group-hover:w-full" />
+                </NavLink>
+              );
+            })}
           </div>
 
           <NavLink

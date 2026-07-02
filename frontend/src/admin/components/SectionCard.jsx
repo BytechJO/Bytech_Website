@@ -4,14 +4,19 @@ import Services from "../services/Services";
 // import Contact from "../contact/Contact";
 import Education from "../../../src/pages/Education/Education.jsx";
 import Portfolio from "../../../src/pages/Portfolio/Portfolio.jsx";
+import About from "../../../src/pages/About/About.jsx";
+import Blog from "../../../src/pages/Blog/Blog.jsx";
+import Contact from "../../../src/pages/Contact/Contact.jsx";
+import Home from "../../pages/HomeDynemic/HomeDynemic.jsx";
 
 const pageComponents = {
   services: Services,
-  // about: About,
-  // contact: Contact,
-  // home: Home,
+  about: About,
+  contact: Contact,
+  home: Home,
   education: Education,
   portfolio: Portfolio,
+  blog: Blog,
 };
 
 export default function SectionCard({ slug: slugProp }) {

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 
-import { useGetNavbarPages } from "../api/pages";
+import { useGetPublicCmsNavbarPages } from "../api/cmsPages";
 
 const fallbackLinks = [
   { id: "fallback-home", label: "Home", to: "/" },
@@ -13,10 +13,30 @@ const fallbackLinks = [
   { id: "fallback-contact", label: "Contact", to: "/contact" },
 ];
 
+function getPageKey(page) {
+  return page.page_key || page.pageKey || page.slug || "";
+}
+
+function getPageLabel(page) {
+  return (
+    page.nav_label ||
+    page.navLabel ||
+    page.navbar_label ||
+    page.title ||
+    getPageKey(page)
+  );
+}
+
+function getPagePath(page) {
+  const pageKey = getPageKey(page);
+
+  return pageKey === "home" ? "/" : `/${pageKey}`;
+}
+
 export default function Nav() {
   const location = useLocation();
 
-  const { links: backendLinks, error } = useGetNavbarPages();
+  const { links: backendLinks, error } = useGetPublicCmsNavbarPages();
 
   const [scrolled, setScrolled] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -26,11 +46,15 @@ export default function Nav() {
       return fallbackLinks;
     }
 
-    return backendLinks.map((link) => ({
-      id: link.id,
-      label: link.navbar_label || link.title || link.slug,
-      to: link.slug === "home" ? "/" : `/${link.slug}`,
-    }));
+    return backendLinks.map((link) => {
+      const pageKey = getPageKey(link);
+
+      return {
+        id: link.id || pageKey,
+        label: getPageLabel(link),
+        to: getPagePath(link),
+      };
+    });
   }, [backendLinks, error]);
 
   useEffect(() => {

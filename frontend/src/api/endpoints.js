@@ -25,13 +25,22 @@ const ENDPOINTS = {
 
   CMS_PAGES: {
     PUBLIC_BY_KEY: (pageKey) => `/cms-pages/public/${pageKey}`,
+    PUBLIC_NAVBAR: "/cms-pages/public/navbar",
+
     ADMIN: "/cms-pages/admin",
     ADMIN_BY_KEY: (pageKey) => `/cms-pages/admin/${pageKey}`,
     CREATE: "/cms-pages/admin",
     UPDATE: (pageKey) => `/cms-pages/admin/${pageKey}`,
     DELETE: (pageKey) => `/cms-pages/admin/${pageKey}`,
-  },
 
+    UPDATE_NAVBAR_STATUS: (pageKey) =>
+      `/cms-pages/admin/${pageKey}/navbar-status`,
+
+    UPDATE_NAVBAR_ORDER: (pageKey) =>
+      `/cms-pages/admin/${pageKey}/navbar-order`,
+
+    REORDER_NAVBAR: "/cms-pages/admin/navbar/reorder",
+  },
   UPLOAD: {
     IMAGE: "/upload/image",
   },

@@ -25,6 +25,25 @@ export function useGetPublicCmsPage(pageKey) {
   );
 }
 
+export function useGetPublicCmsNavbarPages() {
+  const URL = ENDPOINTS.CMS_PAGES.PUBLIC_NAVBAR;
+
+  const { data, isLoading, error, isValidating, mutate } = useSWR(URL, fetcher);
+
+  return useMemo(
+    () => ({
+      links: data || [],
+      pages: data || [],
+      loading: isLoading,
+      error,
+      validating: isValidating,
+      empty: !isLoading && !data?.length,
+      refetch: mutate,
+    }),
+    [data, error, isLoading, isValidating, mutate],
+  );
+}
+
 export function useGetAdminCmsPages() {
   const URL = ENDPOINTS.CMS_PAGES.ADMIN;
 
@@ -93,6 +112,12 @@ export async function getPublicCmsPage(pageKey) {
   return response.data;
 }
 
+export async function getPublicCmsNavbarPages() {
+  const response = await axiosInstance.get(ENDPOINTS.CMS_PAGES.PUBLIC_NAVBAR);
+
+  return response.data;
+}
+
 export async function getAdminCmsPage(pageKey) {
   const response = await axiosInstance.get(
     ENDPOINTS.CMS_PAGES.ADMIN_BY_KEY(pageKey),
@@ -102,6 +127,15 @@ export async function getAdminCmsPage(pageKey) {
 }
 
 export async function createCmsPage(payload) {
+  const response = await axiosInstance.post(
+    ENDPOINTS.CMS_PAGES.CREATE,
+    payload,
+  );
+
+  return response.data;
+}
+
+export async function createAdminCmsPage(payload) {
   const response = await axiosInstance.post(
     ENDPOINTS.CMS_PAGES.CREATE,
     payload,
@@ -122,6 +156,43 @@ export async function updateAdminCmsPage(pageKey, payload) {
 export async function deleteCmsPage(pageKey) {
   const response = await axiosInstance.delete(
     ENDPOINTS.CMS_PAGES.DELETE(pageKey),
+  );
+
+  return response.data;
+}
+
+export async function deleteAdminCmsPage(pageKey) {
+  const response = await axiosInstance.delete(
+    ENDPOINTS.CMS_PAGES.DELETE(pageKey),
+  );
+
+  return response.data;
+}
+
+export async function updateCmsPageNavbarStatus(pageKey, payload) {
+  const response = await axiosInstance.patch(
+    ENDPOINTS.CMS_PAGES.UPDATE_NAVBAR_STATUS(pageKey),
+    payload,
+  );
+
+  return response.data;
+}
+
+export async function updateCmsPageNavbarOrder(pageKey, payload) {
+  const response = await axiosInstance.patch(
+    ENDPOINTS.CMS_PAGES.UPDATE_NAVBAR_ORDER(pageKey),
+    payload,
+  );
+
+  return response.data;
+}
+
+export async function reorderCmsNavbarPages(pages) {
+  const response = await axiosInstance.patch(
+    ENDPOINTS.CMS_PAGES.REORDER_NAVBAR,
+    {
+      pages,
+    },
   );
 
   return response.data;
