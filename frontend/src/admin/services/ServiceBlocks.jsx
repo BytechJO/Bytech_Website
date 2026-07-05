@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Plus, Trash2 } from "lucide-react";
 
 import EditableText from "../../admin/components/EditableText";
@@ -12,7 +12,7 @@ export default function ServiceBlocks({
   onChangePath,
 }) {
   const services = Array.isArray(data) ? data : [];
-
+  const pendingScrollServiceIdRef = useRef(null);
   const revealClass = editable ? "" : "service-reveal";
   const revealLeftClass = editable ? "" : "service-reveal-left";
   const revealRightClass = editable ? "" : "service-reveal-right";
@@ -46,9 +46,12 @@ export default function ServiceBlocks({
 
   function addServiceBlock() {
     const nextIndex = services.length;
+    const newServiceId = `service-${Date.now()}`;
+
+    pendingScrollServiceIdRef.current = newServiceId;
 
     const newService = {
-      id: `service-${Date.now()}`,
+      id: newServiceId,
       badge: "New Service",
       image:
         "https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=1200&auto=format&fit=crop",
@@ -66,7 +69,27 @@ export default function ServiceBlocks({
 
     onChangePath?.([...path], normalizeServices([...services, newService]));
   }
+  useEffect(() => {
+    if (!editable) return;
+    if (!pendingScrollServiceIdRef.current) return;
 
+    const serviceId = pendingScrollServiceIdRef.current;
+
+    const scrollTimer = setTimeout(() => {
+      const element = document.getElementById(serviceId);
+
+      if (element) {
+        element.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+
+        pendingScrollServiceIdRef.current = null;
+      }
+    }, 80);
+
+    return () => clearTimeout(scrollTimer);
+  }, [services.length, editable]);
   function deleteServiceBlock(serviceIndex) {
     const nextServices = services.filter((_, index) => index !== serviceIndex);
 
@@ -224,7 +247,7 @@ export default function ServiceBlocks({
             <div
               key={service.id || `${service.number}-${index}`}
               id={service.id}
-              className={`border-b border-white/[0.07] px-6 py-[96px] last:border-b-0 lg:px-[60px] ${sectionBg}`}
+              className={`scroll-mt-[120px] border-b border-white/[0.07] px-6 py-[96px] last:border-b-0 lg:px-[60px] ${sectionBg}`}
             >
               {editable && (
                 <div className="mb-5 flex justify-end">

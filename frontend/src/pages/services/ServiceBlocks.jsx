@@ -25,7 +25,11 @@ function SmartLink({ to, className, children }) {
 
 export default function ServiceBlocks({ data = [] }) {
   const services = Array.isArray(data) ? data : [];
-
+  const featuresSignature = services
+    .map((service) =>
+      Array.isArray(service.features) ? service.features.length : 0,
+    )
+    .join("|");
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -43,10 +47,13 @@ export default function ServiceBlocks({ data = [] }) {
       ".service-reveal, .service-reveal-left, .service-reveal-right",
     );
 
-    elements.forEach((el) => observer.observe(el));
+    elements.forEach((el) => {
+      el.classList.remove("visible");
+      observer.observe(el);
+    });
 
     return () => observer.disconnect();
-  }, [services.length]);
+  }, [services.length, featuresSignature]);
 
   if (services.length === 0) {
     return null;

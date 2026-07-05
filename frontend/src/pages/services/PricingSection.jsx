@@ -41,7 +41,9 @@ function normalizeFeature(feature) {
 
 export default function PricingSection({ data = {} }) {
   const plans = Array.isArray(data.plans) ? data.plans : [];
-
+  const featuresSignature = plans
+    .map((plan) => (Array.isArray(plan.features) ? plan.features.length : 0))
+    .join("|");
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -57,11 +59,13 @@ export default function PricingSection({ data = {} }) {
 
     const elements = document.querySelectorAll(".pricing-reveal");
 
-    elements.forEach((el) => observer.observe(el));
+    elements.forEach((el) => {
+      el.classList.remove("visible");
+      observer.observe(el);
+    });
 
     return () => observer.disconnect();
-  }, [plans.length]);
-
+  }, [plans.length, featuresSignature]);
   if (!data || Object.keys(data).length === 0) {
     return null;
   }
