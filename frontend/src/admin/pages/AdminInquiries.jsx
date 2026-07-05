@@ -193,7 +193,9 @@ export default function AdminInquiries() {
                     </td>
 
                     <td className="max-w-[360px] px-5 py-5 align-top text-sm leading-6 text-white/55">
-                      {item.message}
+                      <p className="whitespace-pre-wrap break-words text-sm leading-6 text-white/60">
+                        {item.message}
+                      </p>
                     </td>
 
                     <td className="px-5 py-5 align-top">

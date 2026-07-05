@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState } from "react";
-import { Bell, CheckCheck, Loader2, Mail } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Bell, CheckCheck, ChevronDown, Loader2, Mail } from "lucide-react";
 
 import {
   getNotifications,
@@ -8,13 +9,27 @@ import {
   markNotificationAsRead,
 } from "../../api/notifications";
 
+const INQUIRIES_PATH = "/admin/inquiries";
+// غيرها لو صفحة الكويريز عندك مثلا:
+// const INQUIRIES_PATH = "/admin/queries";
+// const INQUIRIES_PATH = "/admin/inquiries";
+
 export default function NotificationsBell() {
+  const navigate = useNavigate();
+
   const [open, setOpen] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [count, setCount] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [showAll, setShowAll] = useState(false);
 
   const dropdownRef = useRef(null);
+
+  const visibleNotifications = useMemo(() => {
+    return showAll ? notifications : notifications.slice(0, 3);
+  }, [notifications, showAll]);
+
+  const hasMore = notifications.length > 3 && !showAll;
 
   async function loadNotifications() {
     try {
@@ -53,6 +68,7 @@ export default function NotificationsBell() {
 
       if (!dropdownRef.current.contains(e.target)) {
         setOpen(false);
+        setShowAll(false);
       }
     }
 
@@ -67,11 +83,12 @@ export default function NotificationsBell() {
     setOpen((prev) => !prev);
 
     if (!open) {
+      setShowAll(false);
       loadNotifications();
     }
   }
 
-  async function handleRead(notification) {
+  async function handleNotificationClick(notification) {
     try {
       if (!notification.is_read) {
         await markNotificationAsRead(notification.id);
@@ -89,8 +106,18 @@ export default function NotificationsBell() {
 
         setCount((prev) => Math.max(prev - 1, 0));
       }
+
+      setOpen(false);
+      setShowAll(false);
+
+      navigate(INQUIRIES_PATH);
     } catch (error) {
       console.error("Mark notification read error:", error);
+
+      setOpen(false);
+      setShowAll(false);
+
+      navigate(INQUIRIES_PATH);
     }
   }
 
@@ -168,11 +195,11 @@ export default function NotificationsBell() {
               </div>
             )}
 
-            {notifications.map((notification) => (
+            {visibleNotifications.map((notification) => (
               <button
                 key={notification.id}
                 type="button"
-                onClick={() => handleRead(notification)}
+                onClick={() => handleNotificationClick(notification)}
                 className={`block w-full border-b border-white/[0.05] px-4 py-4 text-left transition hover:bg-white/[0.04] ${
                   !notification.is_read ? "bg-[#F57A24]/[0.055]" : ""
                 }`}
@@ -212,6 +239,17 @@ export default function NotificationsBell() {
                 </div>
               </button>
             ))}
+
+            {hasMore && (
+              <button
+                type="button"
+                onClick={() => setShowAll(true)}
+                className="flex w-full items-center justify-center gap-2 px-4 py-3 text-xs font-black text-[#F57A24] transition hover:bg-white/[0.04]"
+              >
+                Show more
+                <ChevronDown size={15} />
+              </button>
+            )}
           </div>
         </div>
       )}

@@ -153,10 +153,9 @@ export default function AdminPages() {
       } else {
         await createAdminCmsPage({
           ...payload,
-          content: {},
+          content: [],
         });
       }
-
       await refetch();
       closeForm();
 
