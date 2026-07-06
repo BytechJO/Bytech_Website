@@ -272,7 +272,7 @@ export default function AboutSection({
 
       <section className="grid border-t border-white/[0.07] bg-[#0e1c2e] text-white lg:grid-cols-2">
         <div
-          className={`${editable ? "" : "home-about-reveal-left"} relative min-h-[480px] overflow-hidden`}
+          className={`${editable ? "" : "home-about-reveal-left"} relative min-h-[340px] overflow-hidden sm:min-h-[420px] lg:min-h-[480px]`}
         >
           <EditableImage
             src={about.image}
@@ -286,14 +286,14 @@ export default function AboutSection({
           <div className="absolute inset-0 hidden bg-[linear-gradient(90deg,transparent_50%,#0e1c2e)] lg:block" />
           <div className="absolute inset-0 bg-[linear-gradient(0deg,#0e1c2e_0%,transparent_25%)]" />
 
-          <div className="absolute bottom-9 left-9 rounded-xl border border-white/[0.07] bg-[#0e1c2e]/90 px-[18px] py-3.5 backdrop-blur-[20px]">
+          <div className="absolute bottom-5 left-5 rounded-xl border border-white/[0.07] bg-[#0e1c2e]/90 px-4 py-3 backdrop-blur-[20px] sm:bottom-9 sm:left-9 sm:px-[18px] sm:py-3.5">
             <EditableText
               as="div"
               value={about.foundedYear}
               editable={editable}
               path={[...path, "foundedYear"]}
               onChangePath={onChangePath}
-              className="text-[28px] font-black leading-none text-[#F57A24]"
+              className="text-[24px] font-black leading-none text-[#F57A24] sm:text-[28px]"
               editClassName="!text-[#F57A24]"
             />
 
@@ -303,14 +303,14 @@ export default function AboutSection({
               editable={editable}
               path={[...path, "foundedLabel"]}
               onChangePath={onChangePath}
-              className="mt-[3px] text-[10px] uppercase tracking-[1px] text-white/35"
+              className="mt-[3px] text-[9px] uppercase tracking-[1px] text-white/35 sm:text-[10px]"
               editClassName="!text-white/70"
             />
           </div>
         </div>
 
         <div
-          className={`${editable ? "" : "home-about-reveal-right"} flex flex-col justify-center px-6 py-[72px] lg:px-[60px]`}
+          className={`${editable ? "" : "home-about-reveal-right"} flex flex-col justify-center px-4 py-14 sm:px-6 sm:py-16 lg:px-[60px] lg:py-[72px]`}
         >
           <EditableText
             as="div"
@@ -318,7 +318,7 @@ export default function AboutSection({
             editable={editable}
             path={[...path, "eyebrow"]}
             onChangePath={onChangePath}
-            className="mb-3.5 flex items-center gap-2.5 text-[10px] font-bold uppercase tracking-[2.5px] text-[#F57A24] before:block before:h-[1.5px] before:w-[18px] before:bg-[#F57A24]"
+            className="mb-3 flex items-center gap-2.5 text-[10px] font-bold uppercase tracking-[2px] text-[#F57A24] before:block before:h-[1.5px] before:w-[18px] before:bg-[#F57A24] sm:mb-3.5 sm:tracking-[2.5px]"
             editClassName="!text-[#F57A24]"
           />
 
@@ -328,7 +328,7 @@ export default function AboutSection({
             editable={editable}
             path={[...path, "title"]}
             onChangePath={onChangePath}
-            className="mb-2.5 text-[34px] font-black leading-[1.1] tracking-[-1.5px] text-white"
+            className="mb-3 text-[30px] font-black leading-[1.08] tracking-[-1.2px] text-white sm:text-[34px] sm:tracking-[-1.5px]"
             editClassName="!text-white"
           />
 
@@ -339,7 +339,7 @@ export default function AboutSection({
             multiline
             path={[...path, "description"]}
             onChangePath={onChangePath}
-            className="mb-6 text-sm leading-[1.82] text-white/50"
+            className="mb-6 text-[13px] leading-[1.8] text-white/50 sm:text-sm sm:leading-[1.82]"
             editClassName="!text-white/80"
           />
 
@@ -354,7 +354,7 @@ export default function AboutSection({
             </button>
           )}
 
-          <div className="my-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <div className="my-6 grid grid-cols-2 gap-3">
             {stats.map((stat, index) => (
               <MiniCard
                 key={`${stat.label}-${index}`}
@@ -376,7 +376,7 @@ export default function AboutSection({
             labelPath={[...path, "buttonLabel"]}
             urlPath={[...path, "buttonUrl"]}
             onChangePath={onChangePath}
-            className={`${editable ? "" : "home-about-reveal home-about-delay-3"} inline-block w-fit rounded-lg bg-[#F57A24] px-6 py-2.5 text-[13px] font-semibold text-white no-underline transition-all duration-200 hover:-translate-y-px hover:bg-[#e06815]`}
+            className={`${editable ? "" : "home-about-reveal home-about-delay-3"} inline-flex w-full justify-center rounded-lg bg-[#F57A24] px-6 py-3 text-[13px] font-semibold text-white no-underline transition-all duration-200 hover:-translate-y-px hover:bg-[#e06815] sm:w-fit sm:py-2.5`}
             fallbackLabel="Our Story →"
           />
         </div>
@@ -398,14 +398,14 @@ function MiniCard({
 
   return (
     <div
-      className={`${editable ? "" : "home-about-reveal"} ${delay} relative rounded-[10px] border border-white/[0.07] bg-[#162840] p-[18px]`}
+      className={`${editable ? "" : "home-about-reveal"} ${delay} relative flex min-h-[112px] flex-col items-center justify-center rounded-[12px] border border-white/[0.07] bg-[#162840] p-4 text-center sm:min-h-[120px] sm:p-[18px]`}
     >
       {editable && (
-        <div className="absolute right-2 top-2 flex gap-1">
+        <div className="absolute right-2 top-2 z-[50] flex gap-1">
           <button
             type="button"
             onClick={onCycleColor}
-            className="rounded-md bg-white/[0.06] px-2 py-1 text-[9px] font-bold text-white/40"
+            className="rounded-md bg-white/[0.06] px-1.5 py-1 text-[8px] font-bold text-white/40 sm:px-2 sm:text-[9px]"
           >
             {stat.color || "orange"}
           </button>
@@ -427,13 +427,13 @@ function MiniCard({
           editable
           path={[...path, "value"]}
           onChangePath={onChangePath}
-          className={`mb-1 text-[30px] font-black leading-none tracking-[-1px] ${color}`}
+          className={`mb-1 text-center text-[28px] font-black leading-none tracking-[-1px] sm:text-[30px] ${color}`}
           editClassName="!text-white"
         />
       ) : (
         <Counter
           value={stat.value || "0"}
-          className={`mb-1 text-[30px] font-black leading-none tracking-[-1px] ${color}`}
+          className={`mb-1 text-center text-[28px] font-black leading-none tracking-[-1px] sm:text-[30px] ${color}`}
         />
       )}
 
@@ -443,7 +443,7 @@ function MiniCard({
         editable={editable}
         path={[...path, "label"]}
         onChangePath={onChangePath}
-        className="text-[10px] uppercase tracking-[0.8px] text-white/30"
+        className="text-center text-[10px] uppercase leading-[1.4] tracking-[0.8px] text-white/30"
         editClassName="!text-white/60"
       />
     </div>

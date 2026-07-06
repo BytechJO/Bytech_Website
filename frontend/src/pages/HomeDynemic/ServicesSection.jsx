@@ -179,16 +179,16 @@ export default function ServicesSection({
         .services-reveal.delay-3 { transition-delay: 0.3s; }
       `}</style>
 
-      <section className="bg-[#0e1c2e] px-6 py-[88px] text-white lg:px-[60px]">
-        <div className="mb-11 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-          <div>
+      <section className="bg-[#0e1c2e] px-4 py-16 text-white sm:px-6 sm:py-[76px] lg:px-[60px] lg:py-[88px]">
+        <div className="mb-9 flex flex-col gap-6 lg:mb-11 lg:flex-row lg:items-end lg:justify-between">
+          <div className="max-w-[680px]">
             <EditableText
               as="div"
               value={section.eyebrow}
               editable={editable}
               path={[...path, "eyebrow"]}
               onChangePath={onChangePath}
-              className={`${editable ? "" : "services-reveal"} mb-3.5 flex items-center gap-2.5 text-[10px] font-bold uppercase tracking-[2.5px] text-[#F57A24] before:block before:h-[1.5px] before:w-[18px] before:bg-[#F57A24]`}
+              className={`${editable ? "" : "services-reveal"} mb-3 flex items-center gap-2.5 text-[10px] font-bold uppercase tracking-[2px] text-[#F57A24] before:block before:h-[1.5px] before:w-[18px] before:bg-[#F57A24] sm:mb-3.5 sm:tracking-[2.5px]`}
               editClassName="!text-[#F57A24]"
             />
 
@@ -198,7 +198,7 @@ export default function ServicesSection({
               editable={editable}
               path={[...path, "title"]}
               onChangePath={onChangePath}
-              className={`${editable ? "" : "services-reveal delay-1"} mb-2.5 text-[34px] font-black leading-[1.1] tracking-[-1.5px] text-white sm:text-[42px]`}
+              className={`${editable ? "" : "services-reveal delay-1"} mb-3 text-[30px] font-black leading-[1.08] tracking-[-1.2px] text-white sm:text-[38px] lg:text-[42px] lg:tracking-[-1.5px]`}
               editClassName="!text-white"
             />
 
@@ -209,7 +209,7 @@ export default function ServicesSection({
               multiline
               path={[...path, "description"]}
               onChangePath={onChangePath}
-              className={`${editable ? "" : "services-reveal delay-2"} max-w-[520px] text-sm leading-[1.75] text-white/50`}
+              className={`${editable ? "" : "services-reveal delay-2"} max-w-[520px] text-[13px] leading-[1.75] text-white/50 sm:text-sm`}
               editClassName="!text-white/80"
             />
           </div>
@@ -221,7 +221,7 @@ export default function ServicesSection({
             labelPath={[...path, "buttonLabel"]}
             urlPath={[...path, "buttonUrl"]}
             onChangePath={onChangePath}
-            className={`${editable ? "" : "services-reveal delay-2"} inline-flex w-fit shrink-0 items-center gap-2 rounded-lg border border-white/[0.07] bg-white/[0.04] px-[22px] py-2.5 text-[13px] font-medium text-white/60 no-underline transition-all duration-200 hover:border-white/20 hover:text-white`}
+            className={`${editable ? "" : "services-reveal delay-2"} inline-flex w-full shrink-0 items-center justify-center gap-2 rounded-lg border border-white/[0.07] bg-white/[0.04] px-[22px] py-3 text-[13px] font-medium text-white/60 no-underline transition-all duration-200 hover:border-white/20 hover:text-white sm:w-fit sm:justify-start sm:py-2.5`}
             fallbackLabel="View All Services →"
           />
         </div>
@@ -237,7 +237,7 @@ export default function ServicesSection({
           </button>
         )}
 
-        <div className="grid overflow-hidden rounded-[18px] gap-px md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-3 overflow-hidden rounded-[18px] sm:gap-px md:grid-cols-2 lg:grid-cols-3">
           {services.map((service, index) => {
             const CardTag = editable ? "div" : Link;
 
@@ -253,12 +253,12 @@ export default function ServicesSection({
                 {...cardProps}
                 className={`${editable ? "" : "services-reveal"} delay-${
                   index % 3
-                } group relative block overflow-hidden bg-[#112233] no-underline transition-colors duration-300 hover:bg-[#162840]
-      after:absolute after:left-0 after:right-0 after:top-0 after:h-[2px] after:origin-left after:scale-x-0 after:transition-transform after:duration-300 hover:after:scale-x-100 ${
-        lineColors[service.color] || lineColors.orange
-      }`}
+                } group relative block overflow-hidden rounded-[18px] bg-[#112233] no-underline transition-colors duration-300 hover:bg-[#162840] sm:rounded-none
+                after:absolute after:left-0 after:right-0 after:top-0 after:h-[2px] after:origin-left after:scale-x-0 after:transition-transform after:duration-300 hover:after:scale-x-100 ${
+                  lineColors[service.color] || lineColors.orange
+                }`}
               >
-                <div className="relative h-[170px] overflow-hidden">
+                <div className="relative h-[150px] overflow-hidden sm:h-[170px]">
                   <EditableImage
                     src={service.image}
                     alt={service.name || "Service"}
@@ -289,7 +289,7 @@ export default function ServicesSection({
                   )}
                 </div>
 
-                <div className="relative z-[20] min-h-[190px] bg-[#112233] px-7 pb-14 pt-6">
+                <div className="relative z-[20] min-h-[178px] bg-[#112233] px-5 pb-14 pt-5 sm:min-h-[190px] sm:px-7 sm:pt-6">
                   <EditableText
                     as="div"
                     value={service.number || String(index + 1).padStart(2, "0")}
@@ -306,7 +306,7 @@ export default function ServicesSection({
                     editable={editable}
                     path={[...path, "items", index, "name"]}
                     onChangePath={onChangePath}
-                    className="mb-2 text-base font-bold text-white"
+                    className="mb-2 text-[15px] font-bold leading-[1.35] text-white sm:text-base"
                     editClassName="!text-white"
                   />
 
@@ -319,7 +319,7 @@ export default function ServicesSection({
                     multiline
                     path={[...path, "items", index, "description"]}
                     onChangePath={onChangePath}
-                    className="text-xs leading-[1.65] text-white/40"
+                    className="text-[12px] leading-[1.65] text-white/40"
                     editClassName="!text-white/80"
                   />
 
@@ -341,10 +341,10 @@ export default function ServicesSection({
                     editable={editable}
                     path={[...path, "items", index, "ctaLabel"]}
                     onChangePath={onChangePath}
-                    className={`absolute bottom-5 right-[22px] text-[11px] font-bold text-[#F57A24] transition-opacity duration-200 ${
+                    className={`absolute bottom-5 right-5 text-[11px] font-bold text-[#F57A24] transition-opacity duration-200 sm:right-[22px] ${
                       editable
                         ? "opacity-100"
-                        : "opacity-0 group-hover:opacity-100"
+                        : "opacity-100 sm:opacity-0 sm:group-hover:opacity-100"
                     }`}
                     editClassName="!text-[#F57A24]"
                   />

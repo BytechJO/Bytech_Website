@@ -12,12 +12,10 @@ function Counter({ value = "", className = "" }) {
   const [done, setDone] = useState(false);
 
   const valueText = String(value || "0");
-
   const numberMatch = valueText.match(/[\d.]+/);
   const targetNumber = numberMatch ? Number(numberMatch[0]) : 0;
 
   const prefix = numberMatch ? valueText.slice(0, numberMatch.index) : "";
-
   const suffix = numberMatch
     ? valueText.slice(numberMatch.index + numberMatch[0].length)
     : "";
@@ -177,9 +175,11 @@ export default function HeroSection({
   };
 
   const teamImages = Array.isArray(hero.teamImages) ? hero.teamImages : [];
+
   const floatingCards = Array.isArray(hero.floatingCards)
     ? hero.floatingCards
     : [];
+
   const stats = Array.isArray(hero.stats) ? hero.stats : [];
 
   const { confirm } = useConfirm();
@@ -310,18 +310,21 @@ export default function HeroSection({
 
   return (
     <>
-      <section className="relative grid min-h-screen grid-cols-1 items-center overflow-hidden bg-[#0e1c2e] px-6 pb-20 pt-[130px] text-white lg:grid-cols-2 lg:px-[60px]">
-        <div className="pointer-events-none absolute right-[-100px] top-[-150px] h-[600px] w-[600px] rounded-full bg-[#F57A24]/10 blur-[100px] animate-[orb1_10s_ease-in-out_infinite]" />
-        <div className="pointer-events-none absolute bottom-[-100px] left-[-50px] h-[500px] w-[500px] rounded-full bg-[#2F88C4]/10 blur-[80px] animate-[orb2_13s_ease-in-out_infinite]" />
-        <div className="pointer-events-none absolute inset-0 z-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[length:54px_54px]" />
+      <section className="relative grid min-h-screen grid-cols-1 items-center overflow-hidden bg-[#0e1c2e] px-4 pb-14 pt-[110px] text-white sm:px-6 lg:grid-cols-2 lg:px-[60px] lg:pb-20 lg:pt-[130px]">
+        <div className="pointer-events-none absolute right-[-180px] top-[-180px] h-[460px] w-[460px] rounded-full bg-[#F57A24]/10 blur-[90px] animate-[orb1_10s_ease-in-out_infinite] sm:right-[-100px] sm:top-[-150px] sm:h-[600px] sm:w-[600px] sm:blur-[100px]" />
+
+        <div className="pointer-events-none absolute bottom-[-140px] left-[-140px] h-[380px] w-[380px] rounded-full bg-[#2F88C4]/10 blur-[75px] animate-[orb2_13s_ease-in-out_infinite] sm:bottom-[-100px] sm:left-[-50px] sm:h-[500px] sm:w-[500px] sm:blur-[80px]" />
+
+        <div className="pointer-events-none absolute inset-0 z-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[length:42px_42px] sm:bg-[length:54px_54px]" />
+
         <div className="pointer-events-none absolute left-0 right-0 h-[120px] bg-[linear-gradient(180deg,transparent,rgba(47,136,196,0.04),transparent)] animate-[scan_7s_linear_infinite]" />
 
         <div className="relative z-10">
           <div
-            className="mb-7 inline-flex items-center gap-2 rounded-[20px] border border-[#F57A24]/20 bg-[#F57A24]/[0.08] px-[14px] py-[6px] animate-fade-in-up"
+            className="mb-6 inline-flex max-w-full items-center gap-2 rounded-[20px] border border-[#F57A24]/20 bg-[#F57A24]/[0.08] px-[12px] py-[6px] animate-fade-in-up sm:mb-7 sm:px-[14px]"
             style={{ animationDelay: "0.1s" }}
           >
-            <span className="h-[6px] w-[6px] rounded-full bg-[#F57A24] animate-[pulseDot_2s_infinite]" />
+            <span className="h-[6px] w-[6px] shrink-0 rounded-full bg-[#F57A24] animate-[pulseDot_2s_infinite]" />
 
             <EditableText
               as="span"
@@ -329,13 +332,13 @@ export default function HeroSection({
               editable={editable}
               path={[...path, "badge"]}
               onChangePath={onChangePath}
-              className="text-[10px] font-bold uppercase tracking-[1.5px] text-[#F57A24]"
+              className="truncate text-[9px] font-bold uppercase tracking-[1.3px] text-[#F57A24] sm:text-[10px] sm:tracking-[1.5px]"
               editClassName="!text-[#F57A24]"
             />
           </div>
 
           <h1
-            className="mb-6 text-[56px] font-black leading-none tracking-[-2.5px] sm:text-[72px] animate-fade-in-up"
+            className="mb-5 text-[46px] font-black leading-[0.95] tracking-[-2px] sm:text-[64px] lg:mb-6 lg:text-[72px] lg:tracking-[-2.5px] animate-fade-in-up"
             style={{ animationDelay: "0.2s" }}
           >
             <EditableText
@@ -376,12 +379,12 @@ export default function HeroSection({
             multiline
             path={[...path, "description"]}
             onChangePath={onChangePath}
-            className="mb-10 max-w-[440px] text-[15px] leading-[1.8] text-white/50 animate-fade-in-up"
+            className="mb-8 max-w-[440px] text-[14px] leading-[1.75] text-white/50 sm:text-[15px] lg:mb-10 animate-fade-in-up"
             editClassName="!text-white/80"
           />
 
           <div
-            className="mb-12 flex flex-wrap gap-3 animate-fade-in-up"
+            className="mb-10 flex flex-col gap-3 sm:flex-row sm:flex-wrap lg:mb-12 animate-fade-in-up"
             style={{ animationDelay: "0.4s" }}
           >
             <EditableButton
@@ -391,7 +394,7 @@ export default function HeroSection({
               labelPath={[...path, "primaryLabel"]}
               urlPath={[...path, "primaryUrl"]}
               onChangePath={onChangePath}
-              className="inline-block rounded-lg bg-[#F57A24] px-6 py-2.5 text-[13px] font-semibold text-white shadow-[0_0_20px_rgba(245,122,36,0.3)] transition-all duration-300 animate-[glow_3s_infinite] hover:-translate-y-1 hover:bg-[#e06815] hover:shadow-[0_0_30px_rgba(245,122,36,0.5)]"
+              className="inline-flex justify-center rounded-lg bg-[#F57A24] px-6 py-3 text-[13px] font-semibold text-white shadow-[0_0_20px_rgba(245,122,36,0.3)] transition-all duration-300 animate-[glow_3s_infinite] hover:-translate-y-1 hover:bg-[#e06815] hover:shadow-[0_0_30px_rgba(245,122,36,0.5)]"
               fallbackLabel="Explore Services"
             />
 
@@ -402,7 +405,7 @@ export default function HeroSection({
               labelPath={[...path, "secondaryLabel"]}
               urlPath={[...path, "secondaryUrl"]}
               onChangePath={onChangePath}
-              className="inline-flex items-center gap-2 rounded-lg border border-white/[0.07] bg-white/[0.04] px-[22px] py-2.5 text-[13px] font-medium text-white/60 transition-all duration-300 hover:-translate-y-1 hover:border-white/20 hover:text-white"
+              className="inline-flex items-center justify-center gap-2 rounded-lg border border-white/[0.07] bg-white/[0.04] px-[22px] py-3 text-[13px] font-medium text-white/60 transition-all duration-300 hover:-translate-y-1 hover:border-white/20 hover:text-white"
               fallbackLabel="Book a Call →"
             />
           </div>
@@ -411,7 +414,7 @@ export default function HeroSection({
             className="flex flex-wrap items-center gap-3 animate-fade-in-up"
             style={{ animationDelay: "0.5s" }}
           >
-            <div className="flex">
+            <div className="flex shrink-0">
               {teamImages.map((src, index) => (
                 <div
                   key={`${src}-${index}`}
@@ -451,7 +454,7 @@ export default function HeroSection({
               </button>
             )}
 
-            <span className="text-xs text-white/40">
+            <span className="max-w-[250px] text-xs leading-relaxed text-white/40 sm:max-w-none">
               <EditableText
                 as="span"
                 value={hero.trustedText}
@@ -484,10 +487,10 @@ export default function HeroSection({
         </div>
 
         <div
-          className="relative z-10 mt-16 h-[520px] animate-fade-in-up lg:mt-0"
+          className="relative z-10 mt-12 h-[430px] animate-fade-in-up sm:h-[500px] lg:mt-0 lg:h-[520px]"
           style={{ animationDelay: "0.6s" }}
         >
-          <div className="absolute bottom-[60px] left-10 right-0 top-0 overflow-hidden rounded-[20px] transition-transform duration-700 hover:scale-[1.02]">
+          <div className="absolute inset-x-0 bottom-[70px] top-8 overflow-hidden rounded-[20px] transition-transform duration-700 hover:scale-[1.02] sm:bottom-[60px] sm:left-10 sm:right-0 sm:top-0">
             <EditableImage
               src={hero.mainImage}
               alt={hero.mainImageAlt || "Bytech team"}
@@ -527,7 +530,8 @@ export default function HeroSection({
         </div>
       </section>
 
-      <div className="grid grid-cols-1 border-y border-white/[0.07] bg-[#0e1c2e] shadow-[0_-15px_40px_rgba(0,0,0,0.4)] sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-2 border-y border-white/[0.07] bg-[#0e1c2e] shadow-[0_-15px_40px_rgba(0,0,0,0.4)] lg:grid-cols-4">
+        {" "}
         {stats.map((stat, index) => (
           <StatCard
             key={`${stat.label}-${index}`}
@@ -539,12 +543,11 @@ export default function HeroSection({
             onCycleColor={() => cycleStatColor(index)}
           />
         ))}
-
         {editable && (
           <button
             type="button"
             onClick={addStat}
-            className="flex min-h-[120px] items-center justify-center border-r border-white/[0.07] bg-white/[0.03] px-6 py-8 text-[12px] font-bold text-[#F57A24] transition hover:bg-white/[0.06]"
+            className="flex min-h-[110px] items-center justify-center border-b border-white/[0.07] bg-white/[0.03] px-5 py-6 text-center text-[12px] font-bold text-[#F57A24] transition hover:bg-white/[0.06] sm:border-r lg:min-h-[120px] lg:px-6 lg:py-8"
           >
             <Plus size={15} className="mr-1" />
             Add Stat
@@ -565,16 +568,16 @@ function FloatingCard({
   onCycleColor,
 }) {
   const positions = [
-    "absolute left-0 top-[-16px] w-[210px] animate-[float_6s_ease-in-out_infinite]",
-    "absolute bottom-[50px] left-[-10px] w-[185px] animate-[floatR_7.5s_ease-in-out_infinite]",
-    "absolute right-[-16px] top-[60px] w-[155px] animate-[float_5.5s_1s_ease-in-out_infinite]",
+    "absolute left-0 top-0 w-[165px] animate-[float_6s_ease-in-out_infinite] sm:top-[-16px] sm:w-[210px]",
+    "absolute bottom-[35px] left-0 w-[155px] animate-[floatR_7.5s_ease-in-out_infinite] sm:bottom-[50px] sm:left-[-10px] sm:w-[185px]",
+    "absolute right-0 top-[85px] w-[135px] animate-[float_5.5s_1s_ease-in-out_infinite] sm:right-[-16px] sm:top-[60px] sm:w-[155px]",
   ];
 
   const color = colorText[card.color] || colorText.orange;
 
   return (
     <div
-      className={`${positions[index] || positions[index % positions.length]} rounded-[14px] border border-white/[0.08] bg-[#0e1c2e]/[0.9] p-[18px] shadow-[0_8px_32px_rgba(0,0,0,0.3)] backdrop-blur-[20px] transition-all duration-300 hover:border-[#F57A24]/30 hover:shadow-[0_8px_32px_rgba(245,122,36,0.1)]`}
+      className={`${positions[index] || positions[index % positions.length]} rounded-[14px] border border-white/[0.08] bg-[#0e1c2e]/[0.9] p-4 shadow-[0_8px_32px_rgba(0,0,0,0.3)] backdrop-blur-[20px] transition-all duration-300 hover:border-[#F57A24]/30 hover:shadow-[0_8px_32px_rgba(245,122,36,0.1)] sm:p-[18px]`}
     >
       {editable && (
         <div className="absolute right-2 top-2 z-[70] flex gap-1">
@@ -612,9 +615,10 @@ function FloatingCard({
         editable={editable}
         path={[...path, "value"]}
         onChangePath={onChangePath}
-        className={`text-[26px] font-black ${color}`}
+        className={`text-[22px] font-black sm:text-[26px] ${color}`}
         editClassName="!text-white"
       />
+
       {card.description ? (
         <EditableText
           as="p"
@@ -678,7 +682,7 @@ function StatCard({
 
   return (
     <div
-      className={`group relative overflow-hidden border-r border-white/[0.07] px-6 py-8 transition-all duration-300 last:border-r-0 hover:bg-white/[0.03] lg:px-[60px]
+      className={`group relative flex min-h-[110px] flex-col items-center justify-center overflow-hidden border-b border-white/[0.07] px-5 py-6 text-center transition-all duration-300 last:border-b-0 hover:bg-white/[0.03] sm:min-h-[120px] sm:border-r sm:last:border-r-0 lg:px-[60px] lg:py-8
       after:absolute after:left-0 after:right-0 after:top-0 after:h-[2px] after:origin-left after:scale-x-0 after:transition-transform after:duration-500 hover:after:scale-x-100 ${line}`}
     >
       {editable && (
@@ -708,13 +712,13 @@ function StatCard({
           editable
           path={[...path, "value"]}
           onChangePath={onChangePath}
-          className={`text-[40px] font-black leading-none tracking-[-1.5px] ${color}`}
+          className={`text-center text-[34px] font-black leading-none tracking-[-1.5px] sm:text-[40px] ${color}`}
           editClassName="!text-white"
         />
       ) : (
         <Counter
           value={stat.value || "0"}
-          className={`text-[40px] font-black leading-none tracking-[-1.5px] ${color}`}
+          className={`text-center text-[34px] font-black leading-none tracking-[-1.5px] sm:text-[40px] ${color}`}
         />
       )}
 
@@ -724,7 +728,7 @@ function StatCard({
         editable={editable}
         path={[...path, "label"]}
         onChangePath={onChangePath}
-        className="mt-1.5 text-[11px] font-medium uppercase tracking-[0.8px] text-white/30 transition-colors group-hover:text-white/50"
+        className="mt-2 text-center text-[11px] font-medium uppercase tracking-[0.8px] text-white/30 transition-colors group-hover:text-white/50"
         editClassName="!text-white/60"
       />
     </div>

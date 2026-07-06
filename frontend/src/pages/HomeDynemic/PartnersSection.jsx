@@ -44,6 +44,7 @@ const imageBgColors = {
   cyan: "bg-[#6CC2E9]/[0.12] ring-[#6CC2E9]/20",
   yellow: "bg-[#F9B307]/[0.12] ring-[#F9B307]/20",
 };
+
 function normalizePartner(partner, index) {
   return {
     image:
@@ -109,15 +110,16 @@ export default function PartnersSection({
       partners.filter((_, i) => i !== index),
     );
   }
+
   return (
-    <section className="border-b border-white/[0.07] bg-[#0e1c2e] px-6 py-8 text-white lg:px-[60px]">
+    <section className="border-b border-white/[0.07] bg-[#0e1c2e] px-4 py-7 text-white sm:px-6 sm:py-8 lg:px-[60px]">
       <EditableText
         as="div"
         value={section.eyebrow}
         editable={editable}
         path={[...path, "eyebrow"]}
         onChangePath={onChangePath}
-        className="mb-[22px] flex items-center gap-4 text-center text-[10px] font-bold uppercase tracking-[2px] text-white/20 before:h-px before:flex-1 before:bg-white/[0.06] after:h-px after:flex-1 after:bg-white/[0.06]"
+        className="mb-5 flex items-center gap-3 text-center text-[9px] font-bold uppercase tracking-[1.4px] text-white/20 before:h-px before:flex-1 before:bg-white/[0.06] after:h-px after:flex-1 after:bg-white/[0.06] sm:mb-[22px] sm:gap-4 sm:text-[10px] sm:tracking-[2px]"
         editClassName="!text-white/60"
       />
 
@@ -132,7 +134,7 @@ export default function PartnersSection({
         </button>
       )}
 
-      <div className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+      <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6">
         {partners.map((partner, index) => {
           const CardTag = editable ? "div" : Link;
 
@@ -146,13 +148,13 @@ export default function PartnersSection({
             <CardTag
               key={`${partner.name}-${index}`}
               {...cardProps}
-              className="group relative flex items-center gap-2.5 rounded-[10px] border border-white/[0.07] bg-white/[0.04] px-3.5 py-3 no-underline transition-all duration-300 hover:-translate-y-0.5 hover:border-[#F57A24]/30 hover:bg-white/[0.06]"
+              className="group relative flex min-h-[132px] flex-col items-center justify-center gap-2.5 rounded-[14px] border border-white/[0.07] bg-white/[0.04] px-3 py-4 text-center no-underline transition-all duration-300 hover:-translate-y-0.5 hover:border-[#F57A24]/30 hover:bg-white/[0.06] sm:min-h-[118px] sm:flex-row sm:justify-start sm:gap-2.5 sm:rounded-[10px] sm:px-3.5 sm:py-3 sm:text-left xl:min-h-0"
             >
               {editable && (
                 <button
                   type="button"
                   onClick={() => deletePartner(index)}
-                  className="absolute right-0 top-14 z-[50] inline-flex h-6 w-6 items-center justify-center rounded-md bg-red-500/80 text-white transition hover:bg-red-600"
+                  className="absolute right-2 top-2 z-[50] inline-flex h-6 w-6 items-center justify-center rounded-md bg-red-500/80 text-white transition hover:bg-red-600"
                   title="Delete partner"
                 >
                   <Trash2 size={12} />
@@ -160,7 +162,7 @@ export default function PartnersSection({
               )}
 
               <div
-                className={`relative flex h-[34px] w-[34px] shrink-0 items-center justify-center overflow-hidden rounded-lg ring-1 transition duration-300 group-hover:scale-105 ${
+                className={`relative flex h-[44px] w-[44px] shrink-0 items-center justify-center overflow-hidden rounded-xl ring-1 transition duration-300 group-hover:scale-105 sm:h-[34px] sm:w-[34px] sm:rounded-lg ${
                   imageBgColors[partner.color] || imageBgColors.orange
                 }`}
               >
@@ -181,7 +183,7 @@ export default function PartnersSection({
                   editable={editable}
                   path={[...path, "items", index, "name"]}
                   onChangePath={onChangePath}
-                  className="truncate text-[11px] font-bold leading-[1.3] text-white"
+                  className="line-clamp-2 text-[11px] font-bold leading-[1.35] text-white sm:truncate sm:leading-[1.3]"
                   editClassName="!text-white"
                 />
 
@@ -191,12 +193,12 @@ export default function PartnersSection({
                   editable={editable}
                   path={[...path, "items", index, "type"]}
                   onChangePath={onChangePath}
-                  className="mt-0.5 truncate text-[9px] text-white/30"
+                  className="mt-1 line-clamp-2 text-[9px] leading-[1.35] text-white/30 sm:mt-0.5 sm:truncate"
                   editClassName="!text-white/60"
                 />
 
                 {editable && (
-                  <div className="mt-2 flex flex-wrap gap-1.5">
+                  <div className="mt-2 flex flex-wrap justify-center gap-1.5 sm:justify-start">
                     <EditableText
                       as="span"
                       value={partner.to || "/portfolio"}
