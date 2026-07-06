@@ -2,8 +2,13 @@ import { Outlet } from "react-router-dom";
 
 import AdminSidebar from "../components/AdminSidebar";
 import AdminHeader from "../components/AdminHeader";
+import { useEffect } from "react";
 
 export default function AdminLayout() {
+    useEffect(() => {
+    document.title = "Bytech Admin — Dashboard";
+  }, []);
+
   return (
     <div className="min-h-screen bg-[#0e1c2e] text-white">
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
