@@ -1,12 +1,12 @@
+import { useEffect } from "react";
 import { Outlet } from "react-router-dom";
 
 import AdminSidebar from "../components/AdminSidebar";
 import AdminHeader from "../components/AdminHeader";
-import { useEffect } from "react";
 
 export default function AdminLayout() {
-    useEffect(() => {
-    document.title = "Bytech Admin — Dashboard";
+  useEffect(() => {
+    document.title = "ByteCH Admin — Dashboard";
   }, []);
 
   return (
@@ -19,10 +19,10 @@ export default function AdminLayout() {
 
       <AdminSidebar />
 
-      <div className="lg:pl-[280px]">
+      <div className="pt-[64px] lg:pl-[280px] lg:pt-0">
         <AdminHeader />
 
-        <main className="relative z-10 min-h-[calc(100vh-78px)] px-5 py-6 lg:px-8">
+        <main className="relative z-10 min-h-[calc(100vh-136px)] px-4 py-5 sm:px-5 sm:py-6 lg:min-h-[calc(100vh-78px)] lg:px-8">
           <Outlet />
         </main>
       </div>
