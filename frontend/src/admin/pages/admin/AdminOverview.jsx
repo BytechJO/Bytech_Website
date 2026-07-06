@@ -12,10 +12,13 @@ import { Link } from "react-router-dom";
 
 import { useGetAdminCmsPages } from "../../../api/cmsPages";
 import { useGetAdminContactMessages } from "../../../api/contact";
+import { useGetAnalytics } from "../../../api/Analytics";
 
 export default function AdminOverview() {
   const { pages = [], loading: pagesLoading } = useGetAdminCmsPages();
-
+  const { analytics, loading: analyticsLoading } = useGetAnalytics();
+  const totalVisits = analytics?.totalVisits ?? 0;
+  const todayVisits = analytics?.todayVisits ?? 0;
   const { messages = [], loading: inquiriesLoading } =
     useGetAdminContactMessages();
 
@@ -25,7 +28,7 @@ export default function AdminOverview() {
     return item.status === "new" || item.is_read === false;
   }).length;
 
-  const recentInquiries = messages.slice(0, 5);
+  const recentInquiries = messages.slice(0, 3);
 
   const stats = [
     {
@@ -85,12 +88,13 @@ export default function AdminOverview() {
               <Eye className="mb-4 text-[#6CC2E9]" size={22} />
 
               <p className="text-[24px] font-black text-white">
-                {pagesLoading ? "-" : totalPages}
+                {analyticsLoading ? "-" : totalVisits}
               </p>
 
-              <p className="text-[11px] text-white/30">CMS Pages</p>
+              <p className="text-[11px] text-white/30">
+                {analyticsLoading ? "Loading..." : `${todayVisits} today`}
+              </p>
             </div>
-
             <div className="rounded-2xl border border-white/[0.07] bg-white/[0.03] p-4">
               <TrendingUp className="mb-4 text-[#F57A24]" size={22} />
 

@@ -40,6 +40,10 @@ const ENDPOINTS = {
     MARK_ALL_READ: "/notifications/read-all",
     DELETE: (id) => `/notifications/${id}`,
   },
+  ANALYTICS: {
+    ADMIN: "/analytics",
+    TRACK: "/analytics/track",
+  },
 };
 
 export default ENDPOINTS;

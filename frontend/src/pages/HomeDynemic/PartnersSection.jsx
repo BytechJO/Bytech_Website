@@ -44,9 +44,6 @@ const imageBgColors = {
   cyan: "bg-[#6CC2E9]/[0.12] ring-[#6CC2E9]/20",
   yellow: "bg-[#F9B307]/[0.12] ring-[#F9B307]/20",
 };
-
-const colorOrder = ["orange", "blue", "cyan", "yellow"];
-
 function normalizePartner(partner, index) {
   return {
     image:
@@ -112,23 +109,6 @@ export default function PartnersSection({
       partners.filter((_, i) => i !== index),
     );
   }
-
-  function cycleColor(index) {
-    const next = partners.map((partner, i) => {
-      if (i !== index) return partner;
-
-      const currentIndex = colorOrder.indexOf(partner.color || "orange");
-      const nextColor = colorOrder[(currentIndex + 1) % colorOrder.length];
-
-      return {
-        ...partner,
-        color: nextColor,
-      };
-    });
-
-    onChangePath?.([...path, "items"], next);
-  }
-
   return (
     <section className="border-b border-white/[0.07] bg-[#0e1c2e] px-6 py-8 text-white lg:px-[60px]">
       <EditableText
@@ -172,7 +152,7 @@ export default function PartnersSection({
                 <button
                   type="button"
                   onClick={() => deletePartner(index)}
-                  className="absolute right-2 top-2 z-[50] inline-flex h-6 w-6 items-center justify-center rounded-md bg-red-500/80 text-white transition hover:bg-red-600"
+                  className="absolute right-0 top-14 z-[50] inline-flex h-6 w-6 items-center justify-center rounded-md bg-red-500/80 text-white transition hover:bg-red-600"
                   title="Delete partner"
                 >
                   <Trash2 size={12} />
@@ -217,14 +197,6 @@ export default function PartnersSection({
 
                 {editable && (
                   <div className="mt-2 flex flex-wrap gap-1.5">
-                    <button
-                      type="button"
-                      onClick={() => cycleColor(index)}
-                      className="rounded-md bg-white/[0.06] px-2 py-1 text-[9px] font-bold text-white/40 transition hover:bg-white/[0.1] hover:text-white/70"
-                    >
-                      {partner.color || "orange"}
-                    </button>
-
                     <EditableText
                       as="span"
                       value={partner.to || "/portfolio"}
