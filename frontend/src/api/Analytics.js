@@ -23,8 +23,30 @@ export function useGetAnalytics() {
   );
 }
 
+export function useGetAnalyticsVisits() {
+  const URL = ENDPOINTS.ANALYTICS.VISITS;
+
+  const { data, isLoading, error, isValidating, mutate } = useSWR(URL, fetcher);
+
+  return useMemo(
+    () => ({
+      visits: data?.data?.visits || [],
+      loading: isLoading,
+      error,
+      validating: isValidating,
+      refetch: mutate,
+    }),
+    [data, error, isLoading, isValidating, mutate],
+  );
+}
+
 export async function getAnalytics() {
   const response = await axiosInstance.get(ENDPOINTS.ANALYTICS.ADMIN);
+  return response.data;
+}
+
+export async function getAnalyticsVisits() {
+  const response = await axiosInstance.get(ENDPOINTS.ANALYTICS.VISITS);
   return response.data;
 }
 

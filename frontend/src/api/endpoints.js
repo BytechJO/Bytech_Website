@@ -42,6 +42,7 @@ const ENDPOINTS = {
   },
   ANALYTICS: {
     ADMIN: "/analytics",
+    VISITS: "/analytics/visits",
     TRACK: "/analytics/track",
   },
 };

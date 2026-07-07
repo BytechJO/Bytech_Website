@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/static-components */
+import { useState } from "react";
 import {
   BriefcaseBusiness,
   Images,
@@ -7,23 +9,39 @@ import {
   TrendingUp,
   ArrowUpRight,
   Loader2,
+  X,
+  Monitor,
+  Smartphone,
+  Tablet,
+  Globe2,
+  MapPin,
+  Clock3,
+  Laptop,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
 import { useGetAdminCmsPages } from "../../../api/cmsPages";
 import { useGetAdminContactMessages } from "../../../api/contact";
-import { useGetAnalytics } from "../../../api/Analytics";
+import { useGetAnalytics, useGetAnalyticsVisits } from "../../../api/Analytics";
+import { createPortal } from "react-dom";
 
 export default function AdminOverview() {
+  const [visitsOpen, setVisitsOpen] = useState(false);
+
   const { pages = [], loading: pagesLoading } = useGetAdminCmsPages();
+
   const { analytics, loading: analyticsLoading } = useGetAnalytics();
-  const totalVisits = analytics?.totalVisits ?? 0;
-  const todayVisits = analytics?.todayVisits ?? 0;
+  const { visits = [], loading: visitsLoading } = useGetAnalyticsVisits();
+
   const { messages = [], loading: inquiriesLoading } =
     useGetAdminContactMessages();
 
+  const totalVisits = analytics?.totalVisits ?? 0;
+  const todayVisits = analytics?.todayVisits ?? 0;
+
   const totalPages = pages.length;
   const totalInquiries = messages.length;
+
   const newInquiries = messages.filter((item) => {
     return item.status === "new" || item.is_read === false;
   }).length;
@@ -84,7 +102,11 @@ export default function AdminOverview() {
           </div>
 
           <div className="grid w-full grid-cols-2 gap-3 lg:w-auto lg:min-w-[250px]">
-            <div className="rounded-[18px] border border-white/[0.07] bg-white/[0.035] p-4">
+            <button
+              type="button"
+              onClick={() => setVisitsOpen(true)}
+              className="rounded-[18px] border border-white/[0.07] bg-white/[0.035] p-4 text-left transition-all duration-200 hover:border-[#6CC2E9]/30 hover:bg-[#6CC2E9]/10"
+            >
               <Eye className="mb-3 text-[#6CC2E9]" size={20} />
 
               <p className="text-[22px] font-black leading-none text-white">
@@ -94,7 +116,11 @@ export default function AdminOverview() {
               <p className="mt-2 text-[11px] text-white/30">
                 {analyticsLoading ? "Loading..." : `${todayVisits} today`}
               </p>
-            </div>
+
+              <p className="mt-3 inline-flex text-[11px] font-semibold text-[#6CC2E9]">
+                View details
+              </p>
+            </button>
 
             <div className="rounded-[18px] border border-white/[0.07] bg-white/[0.035] p-4">
               <TrendingUp className="mb-3 text-[#F57A24]" size={20} />
@@ -270,6 +296,14 @@ export default function AdminOverview() {
           </div>
         </div>
       </section>
+
+      {visitsOpen && (
+        <VisitsModal
+          visits={visits}
+          loading={visitsLoading}
+          onClose={() => setVisitsOpen(false)}
+        />
+      )}
     </div>
   );
 }
@@ -288,6 +322,165 @@ function QuickAction({ title, path }) {
       />
     </Link>
   );
+}
+
+function VisitsModal({ visits, loading, onClose }) {
+  return createPortal(
+    <div className="fixed left-0 top-0 z-[99999] flex h-dvh w-dvw items-center justify-center bg-black/60 px-4 py-6 backdrop-blur-sm">
+      <div className="max-h-[88vh] w-full max-w-[980px] overflow-hidden rounded-[28px] border border-white/[0.08] bg-[#0e1c2e] shadow-[0_30px_120px_rgba(0,0,0,0.45)]">
+        <div className="flex items-start justify-between gap-4 border-b border-white/[0.07] p-5">
+          <div>
+            <p className="mb-2 inline-flex rounded-full border border-[#6CC2E9]/20 bg-[#6CC2E9]/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[1.4px] text-[#6CC2E9]">
+              Website Analytics
+            </p>
+
+            <h3 className="text-[22px] font-black tracking-[-0.8px] text-white">
+              Visit Details
+            </h3>
+
+            <p className="mt-1 text-[12px] text-white/35">
+              Latest visitors, location, device, browser, and visited page.
+            </p>
+          </div>
+
+          <button
+            type="button"
+            onClick={onClose}
+            className="flex h-10 w-10 items-center justify-center rounded-2xl border border-white/[0.07] bg-white/[0.03] text-white/45 transition hover:bg-white/[0.07] hover:text-white"
+          >
+            <X size={18} />
+          </button>
+        </div>
+
+        <div className="max-h-[68vh] overflow-y-auto p-5">
+          {loading && (
+            <div className="flex items-center justify-center gap-3 py-16 text-white/35">
+              <Loader2 size={22} className="animate-spin" />
+              <span className="text-sm">Loading visits...</span>
+            </div>
+          )}
+
+          {!loading && visits.length === 0 && (
+            <div className="rounded-3xl border border-white/[0.07] bg-white/[0.03] p-10 text-center text-sm text-white/35">
+              No visits yet.
+            </div>
+          )}
+
+          {!loading && visits.length > 0 && (
+            <div className="grid gap-4">
+              {visits.map((visit) => (
+                <VisitCard key={visit.id} visit={visit} />
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>,
+    document.body,
+  );
+}
+
+function VisitCard({ visit }) {
+  const DeviceIcon = getDeviceIcon(visit.device?.deviceType);
+
+  return (
+    <article className="rounded-[22px] border border-white/[0.07] bg-white/[0.035] p-4 transition hover:border-[#F57A24]/20 hover:bg-white/[0.05]">
+      <div className="mb-4 flex flex-col justify-between gap-3 md:flex-row md:items-start">
+        <div className="flex items-start gap-3">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#6CC2E9]/10 text-[#6CC2E9]">
+            <DeviceIcon size={22} />
+          </div>
+
+          <div>
+            <h4 className="text-[15px] font-extrabold text-white">
+              {visit.device?.deviceName || "Unknown Device"}
+            </h4>
+
+            <p className="mt-1 text-[12px] text-white/35">
+              {visit.device?.deviceType || "Unknown"} ·{" "}
+              {visit.device?.os || "Unknown OS"}
+            </p>
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-white/[0.07] bg-black/10 px-3 py-2 text-[12px] text-white/35">
+          <Clock3 size={14} className="mr-1 inline text-[#F9B307]" />
+          {visit.visitedAtLabel || formatVisitDate(visit.visitedAt)}
+        </div>
+      </div>
+
+      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+        <InfoBox
+          icon={MapPin}
+          label="Country"
+          value={`${visit.location?.country || "Unknown"}${
+            visit.location?.city ? ` / ${visit.location.city}` : ""
+          }`}
+        />
+        <InfoBox
+          icon={Monitor}
+          label="Browser"
+          value={visit.device?.browser || "Unknown Browser"}
+        />
+
+        <InfoBox
+          icon={Laptop}
+          label="Exact Model"
+          value={visit.device?.model || "Not available"}
+        />
+      </div>
+
+      <details className="mt-3">
+        <summary className="cursor-pointer text-[12px] font-semibold text-white/35 transition hover:text-white">
+          Show technical details
+        </summary>
+
+        <div className="mt-3 rounded-2xl border border-white/[0.07] bg-black/15 p-3">
+          <p className="text-[11px] leading-6 text-white/30">
+            <span className="text-white/50">IP:</span> {visit.ip || "Unknown"}
+          </p>
+
+          <p className="break-all text-[11px] leading-6 text-white/30">
+            <span className="text-white/50">User Agent:</span>{" "}
+            {visit.device?.rawUserAgent || "Unknown"}
+          </p>
+        </div>
+      </details>
+    </article>
+  );
+}
+
+function InfoBox({ icon: Icon, label, value }) {
+  return (
+    <div className="rounded-2xl border border-white/[0.07] bg-black/10 p-3">
+      <div className="mb-2 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[1.2px] text-white/25">
+        <Icon size={14} />
+        {label}
+      </div>
+
+      <p className="break-words text-[13px] font-semibold text-white/70">
+        {value || "-"}
+      </p>
+    </div>
+  );
+}
+
+function getDeviceIcon(deviceType) {
+  if (deviceType === "Phone") return Smartphone;
+  if (deviceType === "Tablet") return Tablet;
+  if (deviceType === "Desktop") return Monitor;
+
+  return Laptop;
+}
+
+function formatVisitDate(value) {
+  if (!value) return "-";
+
+  return new Intl.DateTimeFormat("en", {
+    timeZone: "Asia/Amman",
+    dateStyle: "medium",
+    timeStyle: "short",
+  }).format(new Date(value));
 }
 
 function getPageKey(page) {
