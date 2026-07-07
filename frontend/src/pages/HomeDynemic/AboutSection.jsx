@@ -398,7 +398,7 @@ function MiniCard({
 
   return (
     <div
-      className={`${editable ? "" : "home-about-reveal"} ${delay} relative flex min-h-[112px] flex-col items-center justify-center rounded-[12px] border border-white/[0.07] bg-[#162840] p-4 text-center sm:min-h-[120px] sm:p-[18px]`}
+      className={`${editable ? "" : "home-about-reveal"} ${delay} relative flex min-h-[112px] flex-col items-center justify-center rounded-[12px] border border-white/[0.07] bg-[#162840] p-4 text-center sm:min-h-[120px] sm:p-[18px] lg:items-start lg:text-left`}
     >
       {editable && (
         <div className="absolute right-2 top-2 z-[50] flex gap-1">
@@ -427,13 +427,13 @@ function MiniCard({
           editable
           path={[...path, "value"]}
           onChangePath={onChangePath}
-          className={`mb-1 text-center text-[28px] font-black leading-none tracking-[-1px] sm:text-[30px] ${color}`}
+          className={`mb-1 text-center text-[28px] font-black leading-none tracking-[-1px] sm:text-[30px] lg:text-left ${color}`}
           editClassName="!text-white"
         />
       ) : (
         <Counter
           value={stat.value || "0"}
-          className={`mb-1 text-center text-[28px] font-black leading-none tracking-[-1px] sm:text-[30px] ${color}`}
+          className={`mb-1 text-center text-[28px] font-black leading-none tracking-[-1px] sm:text-[30px] lg:text-left ${color}`}
         />
       )}
 
@@ -443,7 +443,7 @@ function MiniCard({
         editable={editable}
         path={[...path, "label"]}
         onChangePath={onChangePath}
-        className="text-center text-[10px] uppercase leading-[1.4] tracking-[0.8px] text-white/30"
+        className="text-center text-[10px] uppercase leading-[1.4] tracking-[0.8px] text-white/30 lg:text-left"
         editClassName="!text-white/60"
       />
     </div>

@@ -4,9 +4,12 @@ import {
   Newspaper,
   Mail,
   Eye,
-  TrendingUp,
   ArrowUpRight,
   Loader2,
+  LayoutGrid,
+  MessageSquareText,
+  PenSquare,
+  Compass,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -14,40 +17,45 @@ import { useGetAdminCmsPages } from "../../../api/cmsPages";
 import { useGetAdminContactMessages } from "../../../api/contact";
 import { useGetAnalytics } from "../../../api/Analytics";
 
+// A single accent, used with restraint. Everything else stays quiet neutrals.
+const ACCENT = "#F2A93B";
+const MONO = "'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace";
+
 export default function AdminOverview() {
   const { pages = [], loading: pagesLoading } = useGetAdminCmsPages();
   const { analytics, loading: analyticsLoading } = useGetAnalytics();
   const totalVisits = analytics?.totalVisits ?? 0;
   const todayVisits = analytics?.todayVisits ?? 0;
+  const visitTrend = analytics?.visitTrend ?? []; // optional array of numbers, last 14 days
   const { messages = [], loading: inquiriesLoading } =
     useGetAdminContactMessages();
 
   const totalPages = pages.length;
   const totalInquiries = messages.length;
-  const newInquiries = messages.filter((item) => {
-    return item.status === "new" || item.is_read === false;
-  }).length;
+  const newInquiries = messages.filter(
+    (item) => item.status === "new" || item.is_read === false,
+  ).length;
 
-  const recentInquiries = messages.slice(0, 3);
+  const recentInquiries = messages.slice(0, 4);
 
   const stats = [
     {
       label: "Pages",
       value: totalPages,
-      change: pagesLoading ? "Loading..." : "CMS pages",
-      icon: BriefcaseBusiness,
+      change: "CMS pages",
+      icon: LayoutGrid,
       path: "/admin/pages",
     },
     {
-      label: "Portfolio Items",
-      value: getPageExists(pages, "portfolio") ? "Live" : "0",
+      label: "Portfolio",
+      value: getPageExists(pages, "portfolio") ? "Live" : "Draft",
       change: "Portfolio page",
       icon: Images,
       path: "/admin/pages/portfolio",
     },
     {
-      label: "Blog Posts",
-      value: getPageExists(pages, "blog") ? "Live" : "0",
+      label: "Blog",
+      value: getPageExists(pages, "blog") ? "Live" : "Draft",
       change: "Blog page",
       icon: Newspaper,
       path: "/admin/pages/blog",
@@ -55,217 +63,218 @@ export default function AdminOverview() {
     {
       label: "Inquiries",
       value: totalInquiries,
-      change: `${newInquiries} new`,
+      change: `${newInquiries} unread`,
       icon: Mail,
       path: "/admin/inquiries",
     },
   ];
 
-  return (
-    <div className="space-y-6">
-      <section className="overflow-hidden rounded-[28px] border border-white/[0.07] bg-[#112233]/70 p-6 shadow-[0_24px_80px_rgba(0,0,0,0.22)] backdrop-blur-[24px]">
-        <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-center">
-          <div>
-            <p className="mb-3 inline-flex rounded-full border border-[#F57A24]/20 bg-[#F57A24]/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[1.5px] text-[#F9B307]">
-              Control Center
-            </p>
+  const quickActions = [
+    {
+      title: "Manage pages",
+      desc: "Edit copy, sections and layout",
+      path: "/admin/pages",
+      icon: BriefcaseBusiness,
+    },
+    {
+      title: "Manage navbar",
+      desc: "Reorder links and menus",
+      path: "/admin/navbar",
+      icon: Compass,
+    },
+    {
+      title: "Review inquiries",
+      desc: `${newInquiries || 0} waiting on a reply`,
+      path: "/admin/inquiries",
+      icon: MessageSquareText,
+    },
+    {
+      title: "Edit contact page",
+      desc: "Update form and details",
+      path: "/admin/pages/contact",
+      icon: PenSquare,
+    },
+  ];
 
-            <h1 className="max-w-[680px] text-[34px] font-black leading-[1.05] tracking-[-1.7px] text-white lg:text-[46px]">
-              Manage your digital ecosystem from one{" "}
-              <span className="bg-[linear-gradient(90deg,#F57A24,#F9B307)] bg-clip-text text-transparent">
-                powerful dashboard.
+  return (
+    <div className="space-y-5">
+      {/* Hero */}
+      <section className="rounded-3xl border border-white/[0.06] bg-[#0F1B2B] p-7">
+        <div className="flex flex-col justify-between gap-8 lg:flex-row lg:items-end">
+          <div className="max-w-[560px]">
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/10 px-3 py-1">
+              <span className="relative flex h-1.5 w-1.5">
+                <span
+                  className="absolute inline-flex h-full w-full animate-ping rounded-full opacity-60"
+                  style={{ backgroundColor: ACCENT }}
+                />
+                <span
+                  className="relative inline-flex h-1.5 w-1.5 rounded-full"
+                  style={{ backgroundColor: ACCENT }}
+                />
               </span>
+              <span className="text-[11px] font-medium uppercase tracking-[1.5px] text-white/50">
+                Live overview
+              </span>
+            </div>
+
+            <h1 className="text-[30px] font-bold leading-[1.15] tracking-[-0.5px] text-white lg:text-[38px]">
+              Everything on the site,{" "}
+              <span style={{ color: ACCENT }}>at a glance.</span>
             </h1>
 
-            <p className="mt-4 max-w-[580px] text-[14px] leading-[1.8] text-white/40">
-              Update pages, manage website content, and follow client inquiries
-              through a clean admin experience.
+            <p className="mt-3 text-[14px] leading-[1.7] text-white/40">
+              Pages, inquiries and traffic, kept in one quiet place.
             </p>
           </div>
 
-          <div className="grid min-w-[260px] grid-cols-2 gap-3">
-            <div className="rounded-2xl border border-white/[0.07] bg-white/[0.03] p-4">
-              <Eye className="mb-4 text-[#6CC2E9]" size={22} />
-
-              <p className="text-[24px] font-black text-white">
-                {analyticsLoading ? "-" : totalVisits}
-              </p>
-
-              <p className="text-[11px] text-white/30">
-                {analyticsLoading ? "Loading..." : `${todayVisits} today`}
-              </p>
+          {/* Signature element: visits rendered as an instrument-style readout with a sparkline, not another gradient card */}
+          <div className="min-w-[260px] rounded-2xl border border-white/[0.06] bg-white/[0.025] p-5">
+            <div className="mb-3 flex items-center justify-between">
+              <div className="flex items-center gap-2 text-white/35">
+                <Eye size={15} />
+                <span className="text-[12px]">Total visits</span>
+              </div>
+              <span className="text-[11px] text-white/25">
+                {analyticsLoading ? "" : `+${todayVisits} today`}
+              </span>
             </div>
-            <div className="rounded-2xl border border-white/[0.07] bg-white/[0.03] p-4">
-              <TrendingUp className="mb-4 text-[#F57A24]" size={22} />
 
-              <p className="text-[24px] font-black text-white">
-                {inquiriesLoading ? "-" : newInquiries}
-              </p>
+            <p
+              className="text-[30px] font-semibold text-white"
+              style={{ fontFamily: MONO }}
+            >
+              {analyticsLoading ? (
+                <Loader2 size={22} className="animate-spin text-white/30" />
+              ) : (
+                totalVisits.toLocaleString()
+              )}
+            </p>
 
-              <p className="text-[11px] text-white/30">New Inquiries</p>
-            </div>
+            <Sparkline data={visitTrend} />
           </div>
         </div>
       </section>
 
-      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      {/* Stat grid */}
+      <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
         {stats.map((item) => {
           const Icon = item.icon;
-
           return (
             <Link
               key={item.label}
               to={item.path}
-              className="group rounded-[24px] border border-white/[0.07] bg-[#112233]/60 p-5 no-underline transition-all duration-300 hover:-translate-y-1 hover:border-[#F57A24]/25 hover:bg-[#112233]/90"
+              className="group rounded-2xl border border-white/[0.06] bg-[#0F1B2B] p-5 no-underline transition-colors duration-200 hover:border-white/[0.14]"
             >
-              <div className="mb-5 flex items-center justify-between">
-                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/[0.04] text-[#F57A24] transition group-hover:bg-[#F57A24] group-hover:text-white">
-                  <Icon size={20} />
+              <div className="mb-6 flex items-center justify-between">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/[0.04] text-white/50">
+                  <Icon size={17} />
                 </div>
-
                 <ArrowUpRight
-                  size={18}
-                  className="text-white/20 transition group-hover:text-[#F57A24]"
+                  size={16}
+                  className="text-white/15 transition-colors group-hover:text-white/50"
                 />
               </div>
 
               <p className="text-[12px] text-white/35">{item.label}</p>
 
-              <h3 className="mt-1 text-[32px] font-black tracking-[-1px] text-white">
+              <h3
+                className="mt-1 text-[26px] font-semibold text-white"
+                style={{ fontFamily: MONO }}
+              >
                 {pagesLoading || inquiriesLoading ? (
-                  <Loader2 size={26} className="animate-spin text-white/35" />
+                  <Loader2 size={22} className="animate-spin text-white/30" />
                 ) : (
                   item.value
                 )}
               </h3>
 
-              <p className="mt-2 text-[12px] text-[#6CC2E9]/70">
-                {item.change}
-              </p>
+              <p className="mt-2 text-[12px] text-white/30">{item.change}</p>
             </Link>
           );
         })}
       </section>
 
-      <section className="grid gap-6 xl:grid-cols-[1.4fr_0.8fr]">
-        <div className="rounded-[26px] border border-white/[0.07] bg-[#112233]/60 p-5">
-          <div className="mb-5 flex items-center justify-between">
+      <section className="grid gap-5 xl:grid-cols-[1.4fr_0.8fr]">
+        {/* Recent inquiries */}
+        <div className="rounded-2xl border border-white/[0.06] bg-[#0F1B2B] p-5">
+          <div className="mb-4 flex items-center justify-between">
             <div>
-              <h3 className="text-[18px] font-extrabold tracking-[-0.5px] text-white">
-                Recent Inquiries
+              <h3 className="text-[16px] font-semibold text-white">
+                Recent inquiries
               </h3>
-
               <p className="text-[12px] text-white/30">
-                Latest contact requests from your website.
+                Latest contact requests from your site.
               </p>
             </div>
-
             <Link
               to="/admin/inquiries"
-              className="rounded-xl border border-white/[0.07] bg-white/[0.03] px-4 py-2 text-[12px] font-semibold text-white/50 no-underline transition hover:text-white"
+              className="rounded-lg border border-white/[0.06] px-3 py-1.5 text-[12px] font-medium text-white/45 no-underline transition-colors hover:text-white"
             >
-              View All
+              View all
             </Link>
           </div>
 
-          <div className="overflow-hidden rounded-2xl border border-white/[0.07]">
-            <table className="w-full border-collapse">
-              <thead className="bg-white/[0.03]">
-                <tr>
-                  <th className="px-4 py-3 text-left text-[11px] font-bold uppercase tracking-[1.4px] text-white/25">
-                    Client
-                  </th>
+          <div className="divide-y divide-white/[0.06] overflow-hidden rounded-xl border border-white/[0.06]">
+            {inquiriesLoading && (
+              <div className="px-4 py-8 text-center text-[13px] text-white/30">
+                Loading inquiries…
+              </div>
+            )}
 
-                  <th className="px-4 py-3 text-left text-[11px] font-bold uppercase tracking-[1.4px] text-white/25">
-                    Type
-                  </th>
+            {!inquiriesLoading && recentInquiries.length === 0 && (
+              <div className="px-4 py-8 text-center text-[13px] text-white/30">
+                No inquiries yet. New messages will show up here.
+              </div>
+            )}
 
-                  <th className="px-4 py-3 text-left text-[11px] font-bold uppercase tracking-[1.4px] text-white/25">
-                    Status
-                  </th>
-                </tr>
-              </thead>
+            {!inquiriesLoading &&
+              recentInquiries.map((item) => {
+                const name = item.full_name || item.fullName || "Unknown";
+                return (
+                  <div
+                    key={item.id}
+                    className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-white/[0.02]"
+                  >
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/[0.05] text-[12px] font-semibold text-white/60">
+                      {getInitials(name)}
+                    </div>
 
-              <tbody>
-                {inquiriesLoading && (
-                  <tr>
-                    <td
-                      colSpan="3"
-                      className="px-4 py-8 text-center text-sm text-white/35"
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-[13px] font-medium text-white">
+                        {name}
+                      </p>
+                      <p className="truncate text-[12px] text-white/30">
+                        {item.email || "—"} · {item.service || "General"}
+                      </p>
+                    </div>
+
+                    <span
+                      className={`shrink-0 rounded-full px-2.5 py-1 text-[11px] font-medium ${getStatusClass(
+                        item.status,
+                      )}`}
                     >
-                      Loading inquiries...
-                    </td>
-                  </tr>
-                )}
-
-                {!inquiriesLoading && recentInquiries.length === 0 && (
-                  <tr>
-                    <td
-                      colSpan="3"
-                      className="px-4 py-8 text-center text-sm text-white/35"
-                    >
-                      No inquiries yet.
-                    </td>
-                  </tr>
-                )}
-
-                {!inquiriesLoading &&
-                  recentInquiries.map((item) => {
-                    const statusLabel = getStatusLabel(item.status);
-
-                    return (
-                      <tr
-                        key={item.id}
-                        className="border-t border-white/[0.07] transition hover:bg-white/[0.03]"
-                      >
-                        <td className="px-4 py-4">
-                          <p className="text-[13px] font-semibold text-white">
-                            {item.full_name || item.fullName || "Unknown"}
-                          </p>
-
-                          <p className="text-[12px] text-white/30">
-                            {item.email || "-"}
-                          </p>
-                        </td>
-
-                        <td className="px-4 py-4 text-[13px] text-white/45">
-                          {item.service || "General"}
-                        </td>
-
-                        <td className="px-4 py-4">
-                          <span
-                            className={`rounded-full px-3 py-1 text-[11px] font-semibold ${getStatusClass(
-                              item.status,
-                            )}`}
-                          >
-                            {statusLabel}
-                          </span>
-                        </td>
-                      </tr>
-                    );
-                  })}
-              </tbody>
-            </table>
+                      {getStatusLabel(item.status)}
+                    </span>
+                  </div>
+                );
+              })}
           </div>
         </div>
 
-        <div className="rounded-[26px] border border-white/[0.07] bg-[#112233]/60 p-5">
-          <h3 className="text-[18px] font-extrabold tracking-[-0.5px] text-white">
-            Quick Actions
+        {/* Quick actions */}
+        <div className="rounded-2xl border border-white/[0.06] bg-[#0F1B2B] p-5">
+          <h3 className="text-[16px] font-semibold text-white">
+            Quick actions
           </h3>
-
-          <p className="mb-5 text-[12px] text-white/30">
+          <p className="mb-4 text-[12px] text-white/30">
             Common admin shortcuts.
           </p>
 
-          <div className="space-y-3">
-            <QuickAction title="Manage Pages" path="/admin/pages" />
-            <QuickAction title="Manage Navbar" path="/admin/navbar" />
-            <QuickAction title="Review Inquiries" path="/admin/inquiries" />
-            <QuickAction
-              title="Edit Contact Page"
-              path="/admin/pages/contact"
-            />
+          <div className="space-y-2">
+            {quickActions.map((item) => (
+              <QuickAction key={item.title} {...item} />
+            ))}
           </div>
         </div>
       </section>
@@ -273,20 +282,75 @@ export default function AdminOverview() {
   );
 }
 
-function QuickAction({ title, path }) {
+function QuickAction({ title, desc, path, icon: Icon }) {
   return (
     <Link
       to={path}
-      className="group flex items-center justify-between rounded-2xl border border-white/[0.07] bg-white/[0.03] px-4 py-4 text-[13px] font-semibold text-white/55 no-underline transition-all duration-200 hover:border-[#F57A24]/30 hover:bg-[#F57A24]/10 hover:text-white"
+      className="group flex items-center gap-3 rounded-xl border border-white/[0.06] px-3.5 py-3 no-underline transition-colors duration-150 hover:border-white/[0.14] hover:bg-white/[0.02]"
     >
-      <span>{title}</span>
+      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/[0.04] text-white/45">
+        <Icon size={15} />
+      </div>
+
+      <div className="min-w-0 flex-1">
+        <p className="truncate text-[13px] font-medium text-white/85">
+          {title}
+        </p>
+        <p className="truncate text-[11.5px] text-white/30">{desc}</p>
+      </div>
 
       <ArrowUpRight
-        size={17}
-        className="text-white/20 transition group-hover:text-[#F57A24]"
+        size={15}
+        className="shrink-0 text-white/15 transition-colors group-hover:text-white/50"
       />
     </Link>
   );
+}
+
+// Small dependency-free sparkline. Falls back to a flat baseline if no trend data is passed.
+function Sparkline({ data }) {
+  const points = data && data.length >= 2 ? data : [1, 1];
+  const max = Math.max(...points, 1);
+  const min = Math.min(...points, 0);
+  const range = max - min || 1;
+  const w = 220;
+  const h = 40;
+  const step = w / (points.length - 1);
+
+  const path = points
+    .map((v, i) => {
+      const x = i * step;
+      const y = h - ((v - min) / range) * h;
+      return `${i === 0 ? "M" : "L"}${x.toFixed(1)},${y.toFixed(1)}`;
+    })
+    .join(" ");
+
+  return (
+    <svg
+      viewBox={`0 0 ${w} ${h}`}
+      className="mt-3 h-8 w-full"
+      preserveAspectRatio="none"
+    >
+      <path
+        d={path}
+        fill="none"
+        stroke={ACCENT}
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        opacity="0.85"
+      />
+    </svg>
+  );
+}
+
+function getInitials(name) {
+  return name
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0].toUpperCase())
+    .join("");
 }
 
 function getPageKey(page) {
@@ -302,26 +366,13 @@ function getStatusLabel(status) {
   if (status === "in_progress") return "Pending";
   if (status === "done") return "Done";
   if (status === "archived") return "Archived";
-
   return "New";
 }
 
 function getStatusClass(status) {
-  if (status === "new") {
-    return "bg-[#F57A24]/10 text-[#F9B307]";
-  }
-
-  if (status === "in_progress") {
-    return "bg-[#2F88C4]/10 text-[#6CC2E9]";
-  }
-
-  if (status === "done") {
-    return "bg-emerald-400/10 text-emerald-300";
-  }
-
-  if (status === "archived") {
-    return "bg-white/[0.06] text-white/40";
-  }
-
-  return "bg-[#F57A24]/10 text-[#F9B307]";
+  if (status === "new") return "bg-[#F2A93B]/10 text-[#F2A93B]";
+  if (status === "in_progress") return "bg-[#6CC2E9]/10 text-[#6CC2E9]";
+  if (status === "done") return "bg-emerald-400/10 text-emerald-300";
+  if (status === "archived") return "bg-white/[0.06] text-white/40";
+  return "bg-[#F2A93B]/10 text-[#F2A93B]";
 }

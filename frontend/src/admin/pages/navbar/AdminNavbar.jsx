@@ -17,6 +17,10 @@ import {
   reorderCmsNavbarPages,
 } from "../../../api/cmsPages";
 
+// Keep in sync with AdminOverview.jsx / AdminSidebar.jsx / AdminInquiries.jsx
+const ACCENT = "#F2A93B";
+const SURFACE = "#0F1B2B";
+
 function getPageKey(page) {
   return page.page_key || page.pageKey || "";
 }
@@ -218,10 +222,13 @@ export default function AdminNavbar() {
 
   if (loading) {
     return (
-      <div className="flex min-h-[360px] items-center justify-center rounded-[30px] border border-white/[0.07] bg-[#112233]/60">
-        <div className="flex items-center gap-3 text-white/45">
-          <Loader2 size={22} className="animate-spin" />
-          <span className="text-sm">Loading navbar pages...</span>
+      <div
+        className="flex min-h-[360px] items-center justify-center rounded-2xl border border-white/[0.06]"
+        style={{ backgroundColor: SURFACE }}
+      >
+        <div className="flex items-center gap-3 text-white/40">
+          <Loader2 size={20} className="animate-spin" />
+          <span className="text-[13px]">Loading navbar pages…</span>
         </div>
       </div>
     );
@@ -229,7 +236,7 @@ export default function AdminNavbar() {
 
   if (error) {
     return (
-      <div className="rounded-[30px] border border-red-400/20 bg-red-400/10 p-6 text-red-200">
+      <div className="rounded-2xl border border-red-400/15 bg-red-400/[0.06] p-6 text-[13px] text-red-200">
         {error.response?.data?.message ||
           error.message ||
           "Failed to load pages"}
@@ -238,49 +245,55 @@ export default function AdminNavbar() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <AdminNavbarPreview links={currentNavbarPages} />
 
-      <div className="grid gap-6 xl:grid-cols-2">
-        <div className="rounded-[30px] border border-white/[0.07] bg-[#112233]/70 p-6 shadow-[0_30px_100px_rgba(0,0,0,0.22)] backdrop-blur-[24px]">
-          <div className="mb-6 flex items-start justify-between gap-4">
+      <div className="grid gap-5 xl:grid-cols-2">
+        {/* Current navbar */}
+        <div
+          className="rounded-2xl border border-white/[0.06] p-6"
+          style={{ backgroundColor: SURFACE }}
+        >
+          <div className="mb-5 flex items-start justify-between gap-4">
             <div>
-              <p className="text-[11px] uppercase tracking-[1.8px] text-white/25">
-                Current Navbar
+              <p className="text-[11px] font-semibold uppercase tracking-[1.6px] text-white/25">
+                Current navbar
               </p>
 
-              <h2 className="mt-2 text-[26px] font-black tracking-[-1px] text-white">
-                In Navbar
+              <h2 className="mt-1.5 text-[20px] font-bold tracking-[-0.4px] text-white">
+                In navbar
               </h2>
 
-              <p className="mt-2 text-sm text-white/35">
+              <p className="mt-1.5 text-[13px] text-white/35">
                 Drag items to change their order in the website navbar.
               </p>
             </div>
 
             {savingOrder && (
-              <div className="flex items-center gap-2 rounded-xl border border-white/[0.07] bg-white/[0.03] px-3 py-2 text-[12px] text-white/45">
-                <Loader2 size={14} className="animate-spin" />
-                Saving...
+              <div className="flex shrink-0 items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.03] px-3 py-1.5 text-[12px] text-white/40">
+                <Loader2 size={13} className="animate-spin" />
+                Saving…
               </div>
             )}
           </div>
 
           {currentNavbarPages.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-white/[0.12] bg-white/[0.02] p-8 text-center">
-              <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-white/[0.04] text-white/25">
-                <Link2 size={22} />
+            <div className="rounded-xl border border-dashed border-white/[0.1] bg-white/[0.015] p-8 text-center">
+              <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-white/[0.04] text-white/25">
+                <Link2 size={19} />
               </div>
 
-              <h3 className="text-lg font-black text-white">No navbar links</h3>
+              <h3 className="text-[14px] font-semibold text-white">
+                No navbar links
+              </h3>
 
-              <p className="mt-2 text-sm text-white/35">
+              <p className="mt-1.5 text-[12.5px] text-white/35">
                 Add pages from the available list to make them appear in the
                 navbar.
               </p>
             </div>
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-2">
               {currentNavbarPages.map((page, index) => {
                 const pageKey = getPageKey(page);
 
@@ -292,27 +305,38 @@ export default function AdminNavbar() {
                     onDragEnter={() => handleDragEnter(index)}
                     onDragEnd={handleDragEnd}
                     onDragOver={handleDragOver}
-                    className={`flex cursor-grab items-center justify-between gap-4 rounded-2xl border px-4 py-4 transition active:cursor-grabbing ${
+                    className={`flex cursor-grab items-center justify-between gap-4 rounded-xl border px-4 py-3.5 transition-colors duration-150 active:cursor-grabbing ${
                       dragOverIndex === index
-                        ? "border-[#F57A24]/40 bg-[#F57A24]/10"
-                        : "border-white/[0.07] bg-white/[0.03] hover:bg-white/[0.05]"
-                    } ${savingOrder ? "pointer-events-none opacity-60" : ""}`}
+                        ? "border-white/20 bg-white/[0.05]"
+                        : "border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.035]"
+                    } ${savingOrder ? "pointer-events-none opacity-50" : ""}`}
+                    style={
+                      dragOverIndex === index
+                        ? { boxShadow: `inset 2px 0 0 ${ACCENT}` }
+                        : undefined
+                    }
                   >
-                    <div className="flex min-w-0 items-center gap-4">
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/[0.07] bg-white/[0.03] text-white/25">
-                        <GripVertical size={17} />
+                    <div className="flex min-w-0 items-center gap-3.5">
+                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-white/20">
+                        <GripVertical size={16} />
                       </div>
 
-                      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#F57A24]/15 text-[#F57A24]">
-                        <Link2 size={18} />
+                      <div
+                        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl"
+                        style={{
+                          backgroundColor: `${ACCENT}1F`,
+                          color: ACCENT,
+                        }}
+                      >
+                        <Link2 size={16} />
                       </div>
 
                       <div className="min-w-0">
-                        <h3 className="truncate text-[15px] font-bold text-white">
+                        <h3 className="truncate text-[13.5px] font-medium text-white">
                           {getPageLabel(page)}
                         </h3>
 
-                        <p className="truncate text-[12px] text-white/35">
+                        <p className="truncate text-[12px] text-white/30">
                           {getPagePath(page)}
                         </p>
                       </div>
@@ -322,12 +346,12 @@ export default function AdminNavbar() {
                       type="button"
                       onClick={() => handleRemoveFromNavbar(page)}
                       disabled={savingKey === pageKey || savingOrder}
-                      className="flex items-center gap-2 rounded-xl border border-red-400/20 bg-red-400/10 px-4 py-2.5 text-[12px] font-bold text-red-200 transition hover:bg-red-400/15 disabled:opacity-60"
+                      className="flex shrink-0 items-center gap-1.5 rounded-lg bg-red-400/[0.08] px-3 py-2 text-[12px] font-medium text-red-300 transition-colors hover:bg-red-400/[0.15] disabled:opacity-50"
                     >
                       {savingKey === pageKey ? (
-                        <Loader2 size={15} className="animate-spin" />
+                        <Loader2 size={14} className="animate-spin" />
                       ) : (
-                        <Trash2 size={15} />
+                        <Trash2 size={14} />
                       )}
                       Remove
                     </button>
@@ -338,57 +362,61 @@ export default function AdminNavbar() {
           )}
         </div>
 
-        <div className="rounded-[30px] border border-white/[0.07] bg-[#112233]/70 p-6 shadow-[0_30px_100px_rgba(0,0,0,0.22)] backdrop-blur-[24px]">
-          <div className="mb-6">
-            <p className="text-[11px] uppercase tracking-[1.8px] text-white/25">
-              Available Pages
+        {/* Available pages */}
+        <div
+          className="rounded-2xl border border-white/[0.06] p-6"
+          style={{ backgroundColor: SURFACE }}
+        >
+          <div className="mb-5">
+            <p className="text-[11px] font-semibold uppercase tracking-[1.6px] text-white/25">
+              Available pages
             </p>
 
-            <h2 className="mt-2 text-[26px] font-black tracking-[-1px] text-white">
-              Add to Navbar
+            <h2 className="mt-1.5 text-[20px] font-bold tracking-[-0.4px] text-white">
+              Add to navbar
             </h2>
 
-            <p className="mt-2 text-sm text-white/35">
+            <p className="mt-1.5 text-[13px] text-white/35">
               These CMS pages exist in the backend but are not currently shown
               in the navbar.
             </p>
           </div>
 
           {availablePages.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-white/[0.12] bg-white/[0.02] p-8 text-center">
-              <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-white/[0.04] text-white/25">
-                <FileText size={22} />
+            <div className="rounded-xl border border-dashed border-white/[0.1] bg-white/[0.015] p-8 text-center">
+              <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-white/[0.04] text-white/25">
+                <FileText size={19} />
               </div>
 
-              <h3 className="text-lg font-black text-white">
+              <h3 className="text-[14px] font-semibold text-white">
                 No available pages
               </h3>
 
-              <p className="mt-2 text-sm text-white/35">
+              <p className="mt-1.5 text-[12.5px] text-white/35">
                 All pages are currently added to the navbar.
               </p>
             </div>
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-2">
               {availablePages.map((page) => {
                 const pageKey = getPageKey(page);
 
                 return (
                   <div
                     key={pageKey}
-                    className="flex items-center justify-between gap-4 rounded-2xl border border-white/[0.07] bg-white/[0.03] px-4 py-4"
+                    className="flex items-center justify-between gap-4 rounded-xl border border-white/[0.06] bg-white/[0.02] px-4 py-3.5"
                   >
-                    <div className="flex min-w-0 items-center gap-4">
-                      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white/[0.05] text-white/35">
-                        <FileText size={18} />
+                    <div className="flex min-w-0 items-center gap-3.5">
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white/[0.04] text-white/30">
+                        <FileText size={16} />
                       </div>
 
                       <div className="min-w-0">
-                        <h3 className="truncate text-[15px] font-bold text-white">
+                        <h3 className="truncate text-[13.5px] font-medium text-white">
                           {getPageLabel(page)}
                         </h3>
 
-                        <p className="truncate text-[12px] text-white/35">
+                        <p className="truncate text-[12px] text-white/30">
                           {getPagePath(page)}
                         </p>
                       </div>
@@ -398,12 +426,13 @@ export default function AdminNavbar() {
                       type="button"
                       onClick={() => handleAddToNavbar(page)}
                       disabled={savingKey === pageKey || savingOrder}
-                      className="flex items-center gap-2 rounded-xl bg-[#F57A24] px-4 py-2.5 text-[12px] font-bold text-white transition hover:bg-[#e06815] disabled:opacity-60"
+                      className="flex shrink-0 items-center gap-1.5 rounded-lg px-3.5 py-2 text-[12px] font-semibold text-[#0F1B2B] transition-opacity hover:opacity-90 disabled:opacity-50"
+                      style={{ backgroundColor: ACCENT }}
                     >
                       {savingKey === pageKey ? (
-                        <Loader2 size={15} className="animate-spin" />
+                        <Loader2 size={14} className="animate-spin" />
                       ) : (
-                        <Plus size={15} />
+                        <Plus size={14} />
                       )}
                       Add
                     </button>

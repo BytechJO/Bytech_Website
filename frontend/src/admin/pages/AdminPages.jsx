@@ -10,6 +10,10 @@ import {
 import { useToast } from "../components/ToastProvider";
 import { useConfirm } from "../components/ConfirmProvider";
 
+// Keep in sync with AdminOverview.jsx / AdminSidebar.jsx / AdminHeader.jsx / AdminInquiries.jsx / AdminNavbar.jsx
+const ACCENT = "#F2A93B";
+const SURFACE = "#0F1B2B";
+
 const initialForm = {
   title: "",
   page_key: "",
@@ -223,10 +227,13 @@ export default function AdminPages() {
 
   if (loading) {
     return (
-      <div className="flex min-h-[360px] items-center justify-center rounded-[30px] border border-white/[0.07] bg-[#112233]/60">
-        <div className="flex items-center gap-3 text-white/45">
-          <Loader2 size={22} className="animate-spin" />
-          <span className="text-sm">Loading CMS pages...</span>
+      <div
+        className="flex min-h-[360px] items-center justify-center rounded-2xl border border-white/[0.06]"
+        style={{ backgroundColor: SURFACE }}
+      >
+        <div className="flex items-center gap-3 text-white/40">
+          <Loader2 size={20} className="animate-spin" />
+          <span className="text-[13px]">Loading CMS pages…</span>
         </div>
       </div>
     );
@@ -234,7 +241,7 @@ export default function AdminPages() {
 
   if (error) {
     return (
-      <div className="rounded-[30px] border border-red-400/20 bg-red-400/10 p-6 text-red-200">
+      <div className="rounded-2xl border border-red-400/15 bg-red-400/[0.06] p-6 text-[13px] text-red-200">
         {error.response?.data?.message ||
           error.message ||
           "Failed to load CMS pages"}
@@ -244,23 +251,30 @@ export default function AdminPages() {
 
   return (
     <>
-      <div className="space-y-6">
-        <div className="rounded-[30px] border border-white/[0.07] bg-[#112233]/70 p-6 shadow-[0_30px_100px_rgba(0,0,0,0.22)] backdrop-blur-[24px]">
+      <div className="space-y-5">
+        {/* Header card */}
+        <div
+          className="rounded-2xl border border-white/[0.06] p-6"
+          style={{ backgroundColor: SURFACE }}
+        >
           <div className="flex flex-col justify-between gap-5 md:flex-row md:items-start">
             <div>
-              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#F57A24]/15 text-[#F57A24]">
-                <FileText size={22} />
+              <div
+                className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl"
+                style={{ backgroundColor: `${ACCENT}1F`, color: ACCENT }}
+              >
+                <FileText size={19} />
               </div>
 
-              <p className="text-[11px] uppercase tracking-[1.8px] text-white/25">
-                CMS Pages Manager
+              <p className="text-[11px] font-semibold uppercase tracking-[1.6px] text-white/25">
+                CMS pages manager
               </p>
 
-              <h1 className="mt-2 text-[34px] font-black tracking-[-1.4px] text-white">
-                Website Pages
+              <h1 className="mt-1.5 text-[26px] font-bold tracking-[-0.6px] text-white">
+                Website pages
               </h1>
 
-              <p className="mt-2 max-w-[620px] text-sm leading-6 text-white/35">
+              <p className="mt-1.5 max-w-[600px] text-[13px] leading-6 text-white/35">
                 Create, edit, delete, and manage CMS pages from here.
               </p>
             </div>
@@ -268,56 +282,70 @@ export default function AdminPages() {
             <button
               type="button"
               onClick={openCreateForm}
-              className="flex items-center justify-center gap-2 rounded-2xl bg-[#F57A24] px-5 py-3 text-sm font-bold text-white transition hover:-translate-y-px hover:bg-[#e06815]"
+              className="flex shrink-0 items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-[13px] font-semibold text-[#0F1B2B] transition-opacity hover:opacity-90"
+              style={{ backgroundColor: ACCENT }}
             >
-              <Plus size={18} />
-              Add Page
+              <Plus size={16} />
+              Add page
             </button>
           </div>
         </div>
 
-        <div className="rounded-[30px] border border-white/[0.07] bg-[#112233]/70 p-5 shadow-[0_30px_100px_rgba(0,0,0,0.22)] backdrop-blur-[24px]">
+        {/* Pages list */}
+        <div
+          className="rounded-2xl border border-white/[0.06] p-5"
+          style={{ backgroundColor: SURFACE }}
+        >
           {sortedPages.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-white/[0.12] bg-white/[0.02] p-10 text-center">
-              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-white/[0.04] text-white/25">
-                <FileText size={24} />
+            <div className="rounded-xl border border-dashed border-white/[0.1] bg-white/[0.015] p-10 text-center">
+              <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-white/[0.04] text-white/25">
+                <FileText size={21} />
               </div>
 
-              <h3 className="text-xl font-black text-white">No pages yet</h3>
+              <h3 className="text-[15px] font-semibold text-white">
+                No pages yet
+              </h3>
 
-              <p className="mx-auto mt-2 max-w-[420px] text-sm text-white/35">
+              <p className="mx-auto mt-1.5 max-w-[420px] text-[13px] text-white/35">
                 Start by creating your first CMS page.
               </p>
 
               <button
                 type="button"
                 onClick={openCreateForm}
-                className="mt-6 rounded-2xl bg-[#F57A24] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#e06815]"
+                className="mt-5 rounded-xl px-4 py-2.5 text-[13px] font-semibold text-[#0F1B2B] transition-opacity hover:opacity-90"
+                style={{ backgroundColor: ACCENT }}
               >
-                Create First Page
+                Create first page
               </button>
             </div>
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-2">
               {sortedPages.map((page) => {
                 const pageKey = getPageKey(page);
 
                 return (
                   <div
                     key={page.id || pageKey}
-                    className="flex items-center justify-between gap-4 rounded-2xl border border-white/[0.07] bg-white/[0.03] px-4 py-4 transition hover:bg-white/[0.05]"
+                    className="flex items-center justify-between gap-4 rounded-xl border border-white/[0.06] bg-white/[0.02] px-4 py-3.5 transition-colors hover:bg-white/[0.035]"
                   >
-                    <div className="flex min-w-0 items-center gap-4">
-                      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#F57A24]/15 text-[#F57A24]">
-                        <FileText size={18} />
+                    <div className="flex min-w-0 items-center gap-3.5">
+                      <div
+                        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl"
+                        style={{
+                          backgroundColor: `${ACCENT}1F`,
+                          color: ACCENT,
+                        }}
+                      >
+                        <FileText size={16} />
                       </div>
 
                       <div className="min-w-0">
-                        <h3 className="truncate text-[15px] font-bold text-white">
+                        <h3 className="truncate text-[13.5px] font-medium text-white">
                           {page.title || "Untitled Page"}
                         </h3>
 
-                        <p className="truncate text-[12px] text-white/35">
+                        <p className="truncate text-[12px] text-white/30">
                           /{pageKey}
                         </p>
                       </div>
@@ -325,7 +353,7 @@ export default function AdminPages() {
 
                     <div className="flex shrink-0 items-center gap-2">
                       <span
-                        className={`hidden rounded-full px-3 py-1 text-[11px] font-bold sm:inline-flex ${
+                        className={`hidden rounded-full px-2.5 py-1 text-[11px] font-medium sm:inline-flex ${
                           page.is_active
                             ? "bg-emerald-400/10 text-emerald-300"
                             : "bg-red-400/10 text-red-300"
@@ -335,37 +363,44 @@ export default function AdminPages() {
                       </span>
 
                       <span
-                        className={`hidden rounded-full px-3 py-1 text-[11px] font-bold md:inline-flex ${
+                        className="hidden rounded-full px-2.5 py-1 text-[11px] font-medium md:inline-flex"
+                        style={
                           page.show_in_navbar
-                            ? "bg-[#F57A24]/10 text-[#F9B307]"
-                            : "bg-white/[0.05] text-white/30"
-                        }`}
+                            ? { backgroundColor: `${ACCENT}1A`, color: ACCENT }
+                            : undefined
+                        }
                       >
-                        {page.show_in_navbar
-                          ? "In Navbar"
-                          : "Hidden from Navbar"}
+                        <span
+                          className={
+                            page.show_in_navbar ? "" : "text-white/30"
+                          }
+                        >
+                          {page.show_in_navbar
+                            ? "In navbar"
+                            : "Hidden from navbar"}
+                        </span>
                       </span>
 
                       <button
                         type="button"
                         onClick={() => openEditForm(page)}
-                        className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/[0.07] bg-white/[0.03] text-white/45 transition hover:border-[#F57A24]/30 hover:text-[#F57A24]"
+                        className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/[0.06] bg-white/[0.02] text-white/40 transition-colors hover:text-white"
                         title="Edit page"
                       >
-                        <Edit3 size={16} />
+                        <Edit3 size={15} />
                       </button>
 
                       <button
                         type="button"
                         onClick={() => handleDelete(page)}
                         disabled={deletingKey === pageKey}
-                        className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/[0.07] bg-white/[0.03] text-white/45 transition hover:border-red-400/30 hover:text-red-300 disabled:opacity-60"
+                        className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/[0.06] bg-white/[0.02] text-white/40 transition-colors hover:text-red-300 disabled:opacity-50"
                         title="Delete page"
                       >
                         {deletingKey === pageKey ? (
-                          <Loader2 size={16} className="animate-spin" />
+                          <Loader2 size={15} className="animate-spin" />
                         ) : (
-                          <Trash2 size={16} />
+                          <Trash2 size={15} />
                         )}
                       </button>
                     </div>
@@ -378,35 +413,36 @@ export default function AdminPages() {
       </div>
 
       {formOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/55 px-4 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4 backdrop-blur-sm">
           <form
             onSubmit={handleSubmit}
-            className="w-full max-w-[620px] rounded-[30px] border border-white/[0.08] bg-[#112233] p-6 shadow-[0_40px_120px_rgba(0,0,0,0.45)]"
+            className="w-full max-w-[580px] rounded-2xl border border-white/[0.07] p-6"
+            style={{ backgroundColor: SURFACE }}
           >
-            <div className="mb-6 flex items-start justify-between gap-4">
+            <div className="mb-5 flex items-start justify-between gap-4">
               <div>
-                <p className="text-[11px] uppercase tracking-[1.8px] text-white/25">
-                  CMS Page Editor
+                <p className="text-[11px] font-semibold uppercase tracking-[1.6px] text-white/25">
+                  CMS page editor
                 </p>
 
-                <h2 className="mt-2 text-[26px] font-black tracking-[-1px] text-white">
-                  {selectedPage ? "Edit Page" : "Add Page"}
+                <h2 className="mt-1.5 text-[20px] font-bold tracking-[-0.4px] text-white">
+                  {selectedPage ? "Edit page" : "Add page"}
                 </h2>
               </div>
 
               <button
                 type="button"
                 onClick={closeForm}
-                className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/[0.07] bg-white/[0.03] text-white/50 transition hover:text-white"
+                className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/[0.06] bg-white/[0.02] text-white/40 transition-colors hover:text-white"
               >
-                <X size={18} />
+                <X size={17} />
               </button>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-3.5">
               <label className="block">
-                <span className="mb-2 block text-[12px] font-semibold text-white/45">
-                  Page Title
+                <span className="mb-1.5 block text-[12px] font-medium text-white/45">
+                  Page title
                 </span>
 
                 <input
@@ -414,13 +450,13 @@ export default function AdminPages() {
                   value={form.title}
                   onChange={handleChange}
                   placeholder="Example: Services"
-                  className="w-full rounded-2xl border border-white/[0.07] bg-white/[0.03] px-4 py-3 text-sm text-white outline-none placeholder:text-white/20 focus:border-[#F57A24]/40"
+                  className="w-full rounded-xl border border-white/[0.06] bg-white/[0.02] px-3.5 py-2.5 text-[13px] text-white outline-none placeholder:text-white/20 focus:border-white/20"
                 />
               </label>
 
               <label className="block">
-                <span className="mb-2 block text-[12px] font-semibold text-white/45">
-                  Page Key
+                <span className="mb-1.5 block text-[12px] font-medium text-white/45">
+                  Page key
                 </span>
 
                 <input
@@ -429,17 +465,17 @@ export default function AdminPages() {
                   onChange={handleChange}
                   placeholder="example: services"
                   disabled={Boolean(selectedPage)}
-                  className="w-full rounded-2xl border border-white/[0.07] bg-white/[0.03] px-4 py-3 text-sm text-white outline-none placeholder:text-white/20 focus:border-[#F57A24]/40 disabled:cursor-not-allowed disabled:opacity-50"
+                  className="w-full rounded-xl border border-white/[0.06] bg-white/[0.02] px-3.5 py-2.5 text-[13px] text-white outline-none placeholder:text-white/20 focus:border-white/20 disabled:cursor-not-allowed disabled:opacity-50"
                 />
 
-                <p className="mt-2 text-[11px] text-white/25">
+                <p className="mt-1.5 text-[11.5px] text-white/25">
                   Public URL: /{form.page_key || "page-key"}
                 </p>
               </label>
 
               <label className="block">
-                <span className="mb-2 block text-[12px] font-semibold text-white/45">
-                  Navbar Label
+                <span className="mb-1.5 block text-[12px] font-medium text-white/45">
+                  Navbar label
                 </span>
 
                 <input
@@ -447,48 +483,52 @@ export default function AdminPages() {
                   value={form.nav_label}
                   onChange={handleChange}
                   placeholder="Example: Services"
-                  className="w-full rounded-2xl border border-white/[0.07] bg-white/[0.03] px-4 py-3 text-sm text-white outline-none placeholder:text-white/20 focus:border-[#F57A24]/40"
+                  className="w-full rounded-xl border border-white/[0.06] bg-white/[0.02] px-3.5 py-2.5 text-[13px] text-white outline-none placeholder:text-white/20 focus:border-white/20"
                 />
               </label>
 
-              <div className="grid gap-3 sm:grid-cols-2">
-                <label className="flex items-center gap-3 rounded-2xl border border-white/[0.07] bg-white/[0.03] px-4 py-3">
+              <div className="grid gap-2.5 sm:grid-cols-2">
+                <label className="flex items-center gap-3 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3.5 py-2.5">
                   <input
                     type="checkbox"
                     name="is_active"
                     checked={form.is_active}
                     onChange={handleChange}
-                    className="h-4 w-4"
+                    className="h-4 w-4 accent-[#F2A93B]"
                   />
 
-                  <span className="text-sm text-white/60">Active Page</span>
+                  <span className="text-[13px] text-white/55">
+                    Active page
+                  </span>
                 </label>
 
-                <label className="flex items-center gap-3 rounded-2xl border border-white/[0.07] bg-white/[0.03] px-4 py-3">
+                <label className="flex items-center gap-3 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3.5 py-2.5">
                   <input
                     type="checkbox"
                     name="show_in_navbar"
                     checked={form.show_in_navbar}
                     onChange={handleChange}
-                    className="h-4 w-4"
+                    className="h-4 w-4 accent-[#F2A93B]"
                   />
 
-                  <span className="text-sm text-white/60">Show in Navbar</span>
+                  <span className="text-[13px] text-white/55">
+                    Show in navbar
+                  </span>
                 </label>
               </div>
 
               {formError && (
-                <div className="rounded-2xl border border-red-400/20 bg-red-400/10 px-4 py-3 text-[13px] text-red-200">
+                <div className="rounded-xl border border-red-400/15 bg-red-400/[0.06] px-3.5 py-2.5 text-[12.5px] text-red-200">
                   {formError}
                 </div>
               )}
             </div>
 
-            <div className="mt-6 flex justify-end gap-3 border-t border-white/[0.07] pt-5">
+            <div className="mt-5 flex justify-end gap-2.5 border-t border-white/[0.06] pt-4">
               <button
                 type="button"
                 onClick={closeForm}
-                className="rounded-2xl border border-white/[0.07] bg-white/[0.03] px-5 py-3 text-sm font-bold text-white/50 transition hover:text-white"
+                className="rounded-xl border border-white/[0.06] bg-white/[0.02] px-4 py-2.5 text-[13px] font-medium text-white/45 transition-colors hover:text-white"
               >
                 Cancel
               </button>
@@ -496,15 +536,16 @@ export default function AdminPages() {
               <button
                 type="submit"
                 disabled={saving}
-                className="flex items-center gap-2 rounded-2xl bg-[#F57A24] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#e06815] disabled:opacity-60"
+                className="flex items-center gap-2 rounded-xl px-4 py-2.5 text-[13px] font-semibold text-[#0F1B2B] transition-opacity hover:opacity-90 disabled:opacity-50"
+                style={{ backgroundColor: ACCENT }}
               >
                 {saving ? (
-                  <Loader2 size={17} className="animate-spin" />
+                  <Loader2 size={16} className="animate-spin" />
                 ) : (
-                  <Save size={17} />
+                  <Save size={16} />
                 )}
 
-                {saving ? "Saving..." : "Save Page"}
+                {saving ? "Saving…" : "Save page"}
               </button>
             </div>
           </form>

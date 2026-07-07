@@ -36,7 +36,6 @@ const trackVisit = async (req, res) => {
 
     await client.query("BEGIN");
 
-    // يمنع طلبين لنفس visitorId يشتغلوا بنفس اللحظة
     await client.query("SELECT pg_advisory_xact_lock(hashtext($1))", [
       visitorId,
     ]);

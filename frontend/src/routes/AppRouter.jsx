@@ -25,6 +25,7 @@ import {
   Blog,
   Contact,
 } from "../pages/Pages.jsx";
+import AdminSettings from "../admin/pages/AdminSettings.jsx";
 
 export default function AppRouter() {
   const location = useLocation();
@@ -52,6 +53,7 @@ export default function AppRouter() {
           <Route path="pages" element={<AdminPages />} />
           <Route path="pages/:slug" element={<AdminPageBuilder />} />
           <Route path="inquiries" element={<AdminInquiries />} />
+          <Route path="settings" element={<AdminSettings />} />
         </Route>
 
         <Route path="*" element={<NotFound />} />
